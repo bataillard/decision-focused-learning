@@ -13,12 +13,12 @@ export create_problem, solve_problem!
 struct Params
     n_features::Integer
     n_commodities::Integer
-
-    weights::Matrix
+    
     forward_params::Forward.Params
+    with_noise::Bool
 
-    function Params(; weights::Matrix, forward_params::Forward.Params)
-        return new(size(weights)[2], forward_params.n_commodities, weights, forward_params)
+    function Params(; n_features::Integer, forward_params::Forward.Params, with_noise=false::Bool)
+        return new(n_features, forward_params.n_commodities, forward_params, with_noise)
     end
 end
 
@@ -54,8 +54,13 @@ function create_A_linreg!(model::Model, params::Params)
     return A
 end
 
+function create_residuals(model::Model, params::Params)
+    @variable(model, r[1:params.n_commodities])
+    return vcat(r, .-r)
+end
+
 function create_b_linreg!(model::Model, params::Params)
-    return zeros(2*params.n_commodities)
+    return (params.with_noise) ? create_residuals(model, params) : zeros(2*params.n_commodities)
 end
 
 function add_linreg_inverse_constraints!(model::Model, A::Matrix, b::Vector, solution_points::Vector{SolutionPoint})    
