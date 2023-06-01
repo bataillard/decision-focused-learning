@@ -66,7 +66,7 @@ function create_and_solve_problem(params::Params, demands::AbstractVector ; sile
     if silent 
         set_silent(model)
     end
-
+    
     return solve_forward_problem!(model)
 end
 
