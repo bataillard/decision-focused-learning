@@ -42,11 +42,11 @@ end
 function generate_solution_points(datagen_params::DataGenParams, problem_params::IOLinReg.Params, featuress)    
     linear_demandss = [predict_demand(datagen_params, features) for features in featuress]
     noisy_demandss = [demands .+ generate_noise(datagen_params) for demands in linear_demandss]
-
+    clamped_demandss = [max.(demands, 0) for demands in noisy_demandss]
     
-    forward_sols = [Forward.create_and_solve_problem(problem_params.forward_params, noisy_demands, silent=true) for noisy_demands in noisy_demandss]
+    forward_sols = [Forward.create_and_solve_problem(problem_params.forward_params, clamped_demands, silent=true) for clamped_demands in clamped_demandss]
 
-    return [IOLinReg.SolutionPoint(forward_sol, features, actual_demands=noisy_demands) for (forward_sol, features, noisy_demands) in zip(forward_sols, featuress, noisy_demandss)]
+    return [IOLinReg.SolutionPoint(forward_sol, features, actual_demands=clamped_demands) for (forward_sol, features, clamped_demands) in zip(forward_sols, featuress, clamped_demandss)]
 end
 
 end

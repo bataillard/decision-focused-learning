@@ -34,6 +34,7 @@ end
 
 struct Solution
     weights::Matrix
+    rmse::Number
 end
 
 function linreg_sol_vector(sol_point::SolutionPoint)::Vector
@@ -59,49 +60,60 @@ function create_A_linreg!(model::Model, params::Params)
     return A
 end
 
-function create_residuals(model::Model, params::Params)
-    @variable(model, r[1:params.n_commodities])
-    return vcat(r, .-r)
+function create_residuals(model::Model, params::Params, n_solution_points::Integer)
+    @variable(model, r[1:params.n_commodities, 1:n_solution_points])
+    return vcat(r, -r)
 end
 
-function create_b_linreg!(model::Model, params::Params)
-    return (params.with_noise) ? create_residuals(model, params) : zeros(2*params.n_commodities)
+function create_b_linreg!(model::Model, params::Params, n_solution_points::Integer)
+    return (params.with_noise) ? create_residuals(model, params, n_solution_points) : zeros(2*params.n_commodities, n_solution_points)
 end
 
-function add_linreg_inverse_constraints!(model::Model, A::Matrix, b::Vector, solution_points::Vector{SolutionPoint})    
-    for sol_point in solution_points
+function add_linreg_inverse_constraints!(model::Model, A, b, solution_points::Vector{SolutionPoint})    
+    for (sol_index, sol_point) in enumerate(solution_points)
         sol_point_vec = linreg_sol_vector(sol_point)
 
         # Workaround using for loop since adding whole matrix at once doesn't work
         for row in 1:size(A)[1]
             a = A[row, :]
 
-            println("$(row) AT $(a)")
-            @constraint(model, sol_point_vec' * a .>= b[row])
+            @constraint(model, sol_point_vec' * a .>= b[row, sol_index])
         end
     end
 end
 
-function add_linreg_inverse_objective!(model::Model, A::Matrix, b::Vector)
-    # For now no objective
+function add_linreg_inverse_objective!(model::Model, A, b, params::Params)
+    if !params.with_noise
+        return
+    end
+
+    @objective(model, Min, vec(b)' * vec(b) ./ 2)
 end
 
 function create_problem(params::Params, solution_points::Vector{SolutionPoint})::Model
     model = Model(Gurobi.Optimizer)
 
     A = create_A_linreg!(model, params)
-    b = create_b_linreg!(model, params)
+    b = create_b_linreg!(model, params, length(solution_points))
 
     add_linreg_inverse_constraints!(model, A, b, solution_points)
-    add_linreg_inverse_objective!(model, A, b)
+    add_linreg_inverse_objective!(model, A, b, params)
 
     return model
 end
 
-function solve_problem!(model::Model)::Solution
+function solve_problem!(model::Model, params::Params)::Solution
     optimize!(model)
+    
     negative_weights = value.(model[:w])
-    return Solution(-negative_weights)
+    rmse = 0
+    
+    if params.with_noise
+        n_residuals = length(value.(model[:r]))
+        rmse = sqrt(objective_value(model) / n_residuals)
+    end
+    
+    return Solution(-negative_weights, rmse)
 end
 
 end
