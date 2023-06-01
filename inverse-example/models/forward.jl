@@ -60,7 +60,7 @@ function solve_forward_problem!(model::Model)::Solution
     return Solution(x_sol, z_sol)
 end
 
-function create_and_solve_problem(params::Params, demands::Vector ; silent=false)::Solution
+function create_and_solve_problem(params::Params, demands::AbstractVector ; silent=false)::Solution
     model = create_forward_problem(params, demands)
 
     if silent 
