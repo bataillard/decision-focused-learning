@@ -36,8 +36,8 @@ struct Solution
     z_sol::Vector
 end
 
-function create_forward_problem(params::Params, demands::Vector)::Model
-    model = Model(Gurobi.Optimizer)
+function create_forward_problem(params::Params, demands, gurobi_env=nothing)::Model
+    model = Model(() -> Gurobi.Optimizer(gurobi_env))
 
     @variable(model, z[1:params.n_paths], Bin)
     @variable(model, x[1:params.n_paths, 1:params.n_commodities] >= 0)
@@ -60,8 +60,8 @@ function solve_forward_problem!(model::Model)::Solution
     return Solution(x_sol, z_sol)
 end
 
-function create_and_solve_problem(params::Params, demands::AbstractVector ; silent=false)::Solution
-    model = create_forward_problem(params, demands)
+function create_and_solve_problem(params::Params, demands ; silent=false, gurobi_env=nothing)::Solution
+    model = create_forward_problem(params, demands, gurobi_env)
 
     if silent 
         set_silent(model)
