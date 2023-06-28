@@ -26,9 +26,10 @@ struct SolutionPoint
     forward_sol::Forward.Solution
     linreg_features::AbstractVector
     actual_demands::Union{AbstractVector, Nothing}
+    problem_params::Union{Params, Nothing}
 
-    function SolutionPoint(forward_sol, linreg_features ; actual_demands=nothing)
-        new(forward_sol, linreg_features, actual_demands)
+    function SolutionPoint(forward_sol, linreg_features, actual_demands=nothing, problem_params=nothing)
+        new(forward_sol, linreg_features, actual_demands, problem_params)
     end
 end
 
