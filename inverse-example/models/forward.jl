@@ -46,7 +46,7 @@ function create_forward_problem(params::Params, demands, gurobi_env=nothing)::Mo
 
     @constraint(model, [k = 1:params.n_commodities], sum(x[:, k]) .== demands[k])
     @constraint(model, [i = 1:params.n_paths], sum(x[i, :]) <= params.capacities[i] * z[i])
-    @constraint(model, [i = 1:params.n_paths, k = 1:params.n_paths; !params.enabled_flows[i, k]], x[i, k] .== 0)
+    @constraint(model, [i = 1:params.n_paths, k = 1:params.n_commodities; !params.enabled_flows[i, k]], x[i, k] .== 0)
 
     return model
 end
