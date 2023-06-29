@@ -31,6 +31,16 @@ struct Params
     end
 end
 
+function Params(new_capacities, old_params::Params)
+    return Params(
+        n_paths=old_params.n_paths, 
+        n_commodities=old_params.n_commodities, 
+        capacities=new_capacities, 
+        design_costs=old_params.design_costs, 
+        flow_costs=old_params.flow_costs, 
+        enabled_flows=old_params.enabled_flows)
+end
+
 struct Solution
     x_sol::Matrix
     z_sol::Vector

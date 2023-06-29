@@ -22,6 +22,14 @@ struct Params
     end
 end
 
+function Params(new_capacities, old_params::Params)
+    forward_params = Forward.Params(new_capacities, old_params.forward_params)
+    return Params(
+        n_features=old_params.n_features, 
+        forward_params=forward_params,  
+        with_noise=old_params.with_noise)
+end
+
 struct SolutionPoint
     forward_sol::Forward.Solution
     linreg_features::AbstractVector
@@ -91,8 +99,8 @@ function add_linreg_inverse_objective!(model::Model, A, b, params::Params)
     @objective(model, Min, vec(b)' * vec(b) ./ 2)
 end
 
-function create_problem(params::Params, solution_points::Vector{SolutionPoint})::Model
-    model = Model(Gurobi.Optimizer)
+function create_problem(params::Params, solution_points::Vector{SolutionPoint}; gurobi_env=nothing)::Model
+    model = Model(() -> Gurobi.Optimizer(gurobi_env))
 
     A = create_A_linreg!(model, params)
     b = create_b_linreg!(model, params, length(solution_points))
