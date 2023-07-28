@@ -6,7 +6,7 @@ import ..Forward as Forward
 import ..InverseLinReg as IOLinReg
 
 export DataGenParams
-export generate_input_features, generate_noises, generate_demands, generate_solution_points
+export generate_input_features, generate_noises, generate_demands, generate_solution_points, generate_dataset
 
 struct DataGenParams
     n_commodities::Integer
@@ -15,11 +15,12 @@ struct DataGenParams
     weights::Matrix
     noise_variance::Union{AbstractVector, Nothing}
 
-    function DataGenParams(; 
-        weights::Matrix, 
-        noise_variance=nothing::Union{AbstractVector, Nothing})
-        
+    function DataGenParams(; weights::Matrix, noise_variance=nothing::Union{AbstractVector, Nothing})
         n_commodities, n_features = size(weights)
+
+        if (n_commodities != 1)
+            error("We're not supporting the case where n_commodities > 1 yet")
+        end
         
         if (noise_variance !== nothing && size(noise_variance)[1] != n_commodities)
             error("Invalid size $(size(noise_variance)) of noise variance, should be $(n_commodities)")
@@ -29,13 +30,19 @@ struct DataGenParams
     end
 end
 
-function generate_input_features(datagen_params::DataGenParams, n_points; lower_bound=0, upper_bound=10)
-    n_features = datagen_params.n_features
+function generate_input_features(datagen_params::DataGenParams, target_demand, n_points; lower_bound=0, upper_bound=10)
+    n_free_features = datagen_params.n_features - 1
+    free_weights, fixed_weights = datagen_params.weights[:, begin:n_free_features], datagen_params.weights[:, n_free_features + 1:end]
     
-    distribution = Uniform.(fill(lower_bound, n_features), fill(upper_bound, n_features))
+    distribution = Uniform.(fill(lower_bound, n_free_features), fill(upper_bound, n_free_features))
     mv_distribution = Product(distribution)
+    free_features = rand(mv_distribution, n_points)
 
-    return rand(mv_distribution, n_points)
+    compute_free_demand = (free_features) -> free_weights * free_features
+    free_demands = mapslices(compute_free_demand, free_features, dims=1)
+    fixed_feature = (target_demand .- free_demands) ./ fixed_weights
+
+    return vcat(free_features, fixed_feature)
 end
 
 function generate_noise(datagen_params::DataGenParams)
@@ -46,7 +53,7 @@ function generate_noise(datagen_params::DataGenParams)
     covariance_matrix = PDiagMat(datagen_params.noise_variance)
     distribution = DiagNormal(zeros(datagen_params.n_commodities), covariance_matrix)
 
-    return rand(distribution, 1)
+    return vec(rand(distribution, 1))
 end
 
 function generate_noises(datagen_params::DataGenParams, n_points)
@@ -54,47 +61,33 @@ function generate_noises(datagen_params::DataGenParams, n_points)
 end
 
 function generate_demands(datagen_params::DataGenParams, features, noises)
-    predict = (feature) -> predict_demand(datagen_params, feature)
-    
-    demands = mapslices(predict, features, dims=1) .+ noises
-    clamped_demands = max.(demands, 0)
-
-    return clamped_demands
-end
-
-function generate_problem_params(base_params::IOLinReg.Params, demands; close_multiplier=1.1, far_multiplier=10, close_commodities=Set([1]))
-    function create_capacities(demand)
-        base_capacities = copy(base_params.forward_params.capacities)
-        
-        for (i, d) in enumerate(demand)
-            new_capacity = (i in close_commodities) ? close_multiplier * d : far_multiplier * d
-            base_capacities[i] = new_capacity
-        end
-        
-        return base_capacities
+    function predict_demand(features)        
+        return datagen_params.weights * features
     end
+    
+    demands = mapslices(predict_demand, features, dims=1)
+    noisy_demands = demands .+ noises
+    non_negative_demands = max.(0, noisy_demands)
 
-    new_capacities = create_capacities.(eachcol(demands))
-    new_params = (IOLinReg.Params(new_capacity, base_params) for new_capacity in new_capacities)
-    return collect(new_params)
+    return non_negative_demands
 end
 
-function generate_solution_points(features, demands, problem_param::IOLinReg.Params; gurobi_env=nothing)
-    return generate_solution_points(features, demands, fill(problem_param, size(demands)[2]), gurobi_env=gurobi_env)
-end
+function generate_solution_points(forward_params::Forward.Params, features, demands; gurobi_env=nothing)
+    create_and_solve_problem = (demand) ->
+        Forward.create_and_solve_problem(forward_params, demand, silent=true, gurobi_env=gurobi_env)
 
-function generate_solution_points(features, demands, problem_params; gurobi_env=nothing)
-    create_and_solve_problem = (demand, param) ->
-        Forward.create_and_solve_problem(param.forward_params, demand, silent=true, gurobi_env=gurobi_env)
-
-    forward_sols = map(create_and_solve_problem, eachcol(demands), problem_params)
-    solutions = map(IOLinReg.SolutionPoint, forward_sols, eachcol(features), eachcol(demands), problem_params)
+    forward_sols = map(create_and_solve_problem, eachcol(demands))
+    solutions = map(IOLinReg.SolutionPoint, forward_sols, eachcol(features), eachcol(demands))
 
     return solutions
 end
 
-function predict_demand(datagen_params::DataGenParams, features)        
-    return datagen_params.weights * features
+function generate_dataset(forward_params::Forward.Params, datagen_params::DataGenParams; n_points=50, target_demand=100, gurobi_env=nothing)
+    features = generate_input_features(datagen_params, target_demand, n_points)
+    noises = generate_noises(datagen_params, n_points)
+    demands = generate_demands(datagen_params, features, noises)
+    
+    return generate_solution_points(forward_params, features, demands, gurobi_env=gurobi_env)
 end
 
 end

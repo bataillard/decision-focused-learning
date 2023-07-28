@@ -34,10 +34,9 @@ struct SolutionPoint
     forward_sol::Forward.Solution
     linreg_features::AbstractVector
     actual_demands::Union{AbstractVector, Nothing}
-    problem_params::Union{Params, Nothing}
 
-    function SolutionPoint(forward_sol, linreg_features, actual_demands=nothing, problem_params=nothing)
-        new(forward_sol, linreg_features, actual_demands, problem_params)
+    function SolutionPoint(forward_sol, linreg_features, actual_demands=nothing)
+        new(forward_sol, linreg_features, actual_demands)
     end
 end
 
@@ -96,7 +95,11 @@ function add_linreg_inverse_objective!(model::Model, A, b, params::Params)
         return
     end
 
-    @objective(model, Min, vec(b)' * vec(b) ./ 2)
+    flat_b = vec(b)
+
+    @variable(model, l1_norm)
+    @constraint(model, vcat([l1_norm], flat_b) in MOI.NormOneCone(1 + length(flat_b)))
+    @objective(model, Min, l1_norm)
 end
 
 function create_problem(params::Params, solution_points::Vector{SolutionPoint}; gurobi_env=nothing)::Model

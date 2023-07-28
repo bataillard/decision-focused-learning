@@ -11,12 +11,12 @@ struct Params
     n_paths::Int
     n_commodities::Int
 
-    capacities::Vector{Number}
+    capacities::AbstractVector{Number}
 
-    design_costs::Vector
-    flow_costs::Matrix
+    design_costs::AbstractVector
+    flow_costs::AbstractMatrix
 
-    enabled_flows::Matrix{Bool}
+    enabled_flows::AbstractMatrix{Bool}
 
     function Params(; n_paths, n_commodities, capacities, design_costs, flow_costs, enabled_flows=nothing)
         shape = (n_paths, n_commodities)
@@ -51,7 +51,6 @@ function create_forward_problem(params::Params, demands, gurobi_env=nothing)::Mo
 
     @variable(model, z[1:params.n_paths], Bin)
     @variable(model, x[1:params.n_paths, 1:params.n_commodities] >= 0)
-
     @objective(model, Min, params.design_costs' * z + sum(params.flow_costs .* x))
 
     @constraint(model, [k = 1:params.n_commodities], sum(x[:, k]) .== demands[k])
