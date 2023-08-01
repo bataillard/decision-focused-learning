@@ -5,7 +5,7 @@ using Gurobi
 using LinearAlgebra 
 
 export Params, Solution
-export sol_vector, create_and_solve_problem
+export sol_vector, create_and_solve_problem, create_and_solve_flow_problem
 
 struct Params
     n_paths::Int
@@ -31,22 +31,13 @@ struct Params
     end
 end
 
-function Params(new_capacities, old_params::Params)
-    return Params(
-        n_paths=old_params.n_paths, 
-        n_commodities=old_params.n_commodities, 
-        capacities=new_capacities, 
-        design_costs=old_params.design_costs, 
-        flow_costs=old_params.flow_costs, 
-        enabled_flows=old_params.enabled_flows)
-end
-
 struct Solution
     x_sol::Matrix
     z_sol::Vector
+    objective_value::Number
 end
 
-function create_forward_problem(params::Params, demands, gurobi_env=nothing)::Model
+function create_forward_problem(params::Params, demands; gurobi_env=nothing)::Model
     model = Model(() -> Gurobi.Optimizer(gurobi_env))
 
     @variable(model, z[1:params.n_paths], Bin)
@@ -60,23 +51,23 @@ function create_forward_problem(params::Params, demands, gurobi_env=nothing)::Mo
     return model
 end
 
-function solve_forward_problem!(model::Model)::Solution
+function solve_forward_problem!(model::Model, silent)::Solution
+    if silent 
+        set_silent(model)
+    end
+
     optimize!(model)
 
     x_sol = value.(model[:x])
     z_sol = value.(model[:z])
+    objective = objective_value(model)
 
-    return Solution(x_sol, z_sol)
+    return Solution(x_sol, z_sol, objective)
 end
 
 function create_and_solve_problem(params::Params, demands ; silent=false, gurobi_env=nothing)::Solution
-    model = create_forward_problem(params, demands, gurobi_env)
-
-    if silent 
-        set_silent(model)
-    end
-    
-    return solve_forward_problem!(model)
+    model = create_forward_problem(params, demands, gurobi_env=gurobi_env)
+    return solve_forward_problem!(model, silent)
 end
 
 
@@ -85,5 +76,50 @@ function sol_vector(sol::Solution)::Vector
 
     return vec(vcat(flat_xs, sol.z_sol))
 end
+
+# =========================================================
+# Flow problem
+# =========================================================
+
+function create_and_solve_flow_problem(params::Params, demands, z_sol; recourse_capacity=1_000_000_000, recourse_flow_cost=1_000_000_000, silent=true, gurobi_env=nothing)
+    flow_model = create_flow_problem(params, demands, z_sol, recourse_capacity, recourse_flow_cost, gurobi_env=gurobi_env)
+    return solve_forward_problem!(flow_model, silent)
+end
+
+function create_flow_problem(params::Params, demands, z_sol, recourse_capacity, recourse_flow_cost; gurobi_env=nothing)::Model
+    recourse_params, recourse_z_sol = add_recourse_path(params, z_sol, recourse_capacity, recourse_flow_cost)
+    design_model = create_forward_problem(recourse_params, demands, gurobi_env=gurobi_env)
+    flow_model = fix_design_variables!(design_model, recourse_z_sol)
+
+    return flow_model
+end
+
+function add_recourse_path(params::Params, z_sol, recourse_capacity, recourse_flow_cost)
+    recourse_params = Params(
+        n_paths=params.n_paths + 1, 
+        n_commodities=params.n_commodities, 
+        capacities=vcat([recourse_capacity], params.capacities), 
+        design_costs=vcat([0], params.design_costs), 
+        flow_costs=vcat(fill(recourse_flow_cost, (1, params.n_commodities)), params.flow_costs), 
+        enabled_flows=vcat(fill(true, (1, params.n_commodities)), params.enabled_flows))
+
+    recourse_z_sol = vcat([1.0], z_sol)
+
+    return recourse_params, recourse_z_sol
+end
+
+function fix_design_variables!(model::Model, z_sol)
+    zs = model[:z]
+    @constraint(model, [i = 1:length(zs)], zs[i] == z_sol[i])
+
+    return model
+end
+
+
+
+
+
+
+
 
 end
