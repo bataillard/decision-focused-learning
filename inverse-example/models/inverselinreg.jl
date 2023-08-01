@@ -8,7 +8,7 @@ import ..Forward as Forward
 import ..InverseDemand as IODemand
 
 export Params, SolutionPoint, Solution
-export create_problem, solve_problem!
+export create_problem, solve_problem!, predict_inverse_model
 
 struct Params
     n_features::Integer
@@ -40,6 +40,7 @@ struct SolutionPoint
     end
 end
 
+# TODO change RMSE
 struct Solution
     weights::Matrix
     rmse::Number
@@ -126,6 +127,10 @@ function solve_problem!(model::Model, params::Params)::Solution
     end
     
     return Solution(-negative_weights, rmse)
+end
+
+function predict_inverse_model(inverse_solution::Solution, feature_vector)
+    return inverse_solution.weights * feature_vector
 end
 
 end
