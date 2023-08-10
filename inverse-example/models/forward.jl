@@ -35,6 +35,7 @@ struct Solution
     x_sol::Matrix
     z_sol::Vector
     objective_value::Number
+    recourse_flow::Union{Nothing, Number}
 end
 
 function create_forward_problem(params::Params, demands; gurobi_env=nothing)::Model
@@ -51,7 +52,7 @@ function create_forward_problem(params::Params, demands; gurobi_env=nothing)::Mo
     return model
 end
 
-function solve_forward_problem!(model::Model, silent)::Solution
+function solve_forward_problem!(model::Model, silent; with_recourse=false)::Solution
     if silent 
         set_silent(model)
     end
@@ -61,8 +62,9 @@ function solve_forward_problem!(model::Model, silent)::Solution
     x_sol = value.(model[:x])
     z_sol = value.(model[:z])
     objective = objective_value(model)
+    recourse_flow = with_recourse ? first(x_sol) : nothing
 
-    return Solution(x_sol, z_sol, objective)
+    return Solution(x_sol, z_sol, objective, recourse_flow)
 end
 
 function create_and_solve_problem(params::Params, demands ; silent=false, gurobi_env=nothing)::Solution
@@ -83,7 +85,7 @@ end
 
 function create_and_solve_flow_problem(params::Params, demands, z_sol; recourse_capacity=1_000_000_000, recourse_flow_cost=1_000_000_000, silent=true, gurobi_env=nothing)
     flow_model = create_flow_problem(params, demands, z_sol, recourse_capacity, recourse_flow_cost, gurobi_env=gurobi_env)
-    return solve_forward_problem!(flow_model, silent)
+    return solve_forward_problem!(flow_model, silent, with_recourse=true)
 end
 
 function create_flow_problem(params::Params, demands, z_sol, recourse_capacity, recourse_flow_cost; gurobi_env=nothing)::Model
