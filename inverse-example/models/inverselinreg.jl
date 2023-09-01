@@ -7,8 +7,13 @@ using LinearAlgebra
 import ..Forward as Forward
 import ..InverseDemand as IODemand
 
-export Params, SolutionPoint, Solution
+export Params, SolutionPoint, Solution, ObjectiveNorm
 export create_problem, solve_problem!, predict_inverse_model
+
+@enum ObjectiveNorm begin
+    L1
+    L2
+end
 
 struct Params
     n_features::Integer
@@ -16,9 +21,10 @@ struct Params
     
     forward_params::Forward.Params
     with_noise::Bool
+    norm::ObjectiveNorm
 
-    function Params(; n_features::Integer, forward_params::Forward.Params, with_noise=false::Bool)
-        return new(n_features, forward_params.n_commodities, forward_params, with_noise)
+    function Params(; n_features::Integer, forward_params::Forward.Params, with_noise=false::Bool, norm=L1::ObjectiveNorm)
+        return new(n_features, forward_params.n_commodities, forward_params, with_noise, norm)
     end
 end
 
@@ -27,7 +33,8 @@ function Params(new_capacities, old_params::Params)
     return Params(
         n_features=old_params.n_features, 
         forward_params=forward_params,  
-        with_noise=old_params.with_noise)
+        with_noise=old_params.with_noise,
+        norm=old_params.norm)
 end
 
 struct SolutionPoint
@@ -98,9 +105,13 @@ function add_linreg_inverse_objective!(model::Model, A, b, params::Params)
 
     flat_b = vec(b)
 
-    @variable(model, l1_norm)
-    @constraint(model, vcat([l1_norm], flat_b) in MOI.NormOneCone(1 + length(flat_b)))
-    @objective(model, Min, l1_norm)
+    if params.norm == L1
+        @variable(model, l1_norm)
+        @constraint(model, vcat([l1_norm], flat_b) in MOI.NormOneCone(1 + length(flat_b)))
+        @objective(model, Min, l1_norm)
+    elseif params.norm == L2
+        @objective(model, Min, sum(flat_b .* flat_b ./ 2))
+    end
 end
 
 function create_problem(params::Params, solution_points::Vector{SolutionPoint}; gurobi_env=nothing)::Model
@@ -119,14 +130,14 @@ function solve_problem!(model::Model, params::Params)::Solution
     optimize!(model)
     
     negative_weights = value.(model[:w])
-    rmse = 0
+    objective = 0
     
     if params.with_noise
         n_residuals = length(value.(model[:r]))
-        rmse = sqrt(objective_value(model) / n_residuals)
+        objective = objective_value(model) / n_residuals
     end
     
-    return Solution(-negative_weights, rmse)
+    return Solution(-negative_weights, objective)
 end
 
 function predict_inverse_model(inverse_solution::Solution, feature_vector)
