@@ -1,0 +1,49 @@
+%%%%%%%%%%%%%%%%%%%%
+\chapter{Conclusion} \label{sec:conclusion}
+%%%%%%%%%%%%%%%%%%%%
+
+At the beginning of this thesis, we embarked on a research journey to study how to improve demand predictions for ND problems. We set out to integrate the prediction and optimization steps so that prediction models would make predictions that minimize optimization costs. The problem of using DFL to predict the demand for commodities in ND problems had not been studied before, and presented several unique features: ND is an optimization problem with high computational complexity, integer and continuous variables, and uncertain parameters in the constraints, not the objective. The objective of this thesis was to perform an exploratory study on the integration of the prediction and optimization steps for ND problems. We first compiled a literature review in the fields of ND, DFL, and IO, and then attempted to apply existing methods to our problem. We found that existing methods cannot be used and that new approaches are needed. We explored a promising method based on reweighting the loss function of the prediction model. In the following, we retrace the steps of our study and discuss our results in Section~\ref{sec:conclusion:discussion}, and provide avenues for future research in Section~\ref{sec:conclusion:future-work} 
+
+\section{Discussion} \label{sec:conclusion:discussion}
+
+Our first step was to review the existing literature related to the three fields of ND, DFL and IO, as we believed we could find or combine existing techniques from each field to solve our problem. 
+
+ND is a well-established branch of operations research that uses mathematical optimization to design an optimal network in a graph. 
+Uncertainty in ND is traditionally handled with stochastic or robust optimization models, that optimize over the entire distribution or within an uncertainty set of the uncertain parameters. These models are computationally expensive. 
+In practice, we use less computationally expensive deterministic ND models and make point predictions for the uncertain parameters. 
+
+The field of DFL, still in its infancy, lies at the intersection of machine learning and optimization research. 
+DFL models integrate the prediction and optimization steps by training the prediction model to make predictions that minimize the downstream optimization cost.
+Most DFL models define a loss function called regret, which is the difference in cost between the optimization network with the predicted parameters and the problem with the actual parameters. 
+The training procedure finds the prediction model that minimizes the loss function using a variant of gradient descent. Gradient descent requires that the loss function be well-defined and differentiable. 
+Most research in DFL focuses on uncertain objective parameters, where the regret is well-defined. 
+The few works that consider uncertain constraint parameters do not use regret and minimize a simpler, differentiable loss function. 
+
+IO initially seemed unrelated to our problem because it focuses on recovering the uncertain parameters of an optimization model given solutions to the problem. 
+It typically does not produce a trained prediction model that generalizes to new instances of the optimization problem. 
+Instead, most IO models are re-run for each instance with different parameters. 
+However, IO has a number of advantages: as a more mature field, it has techniques for recovering parameters in the constraints and can handle integer variables. 
+Our hope was to integrate a prediction model into an inverse optimization problem, and train it using constraint recovery techniques to build our DFL model.
+While working on this thesis, \cite{sunMaximumOptimalityMargin2023} published research formulating an IO model that trains a prediction model to predict objective parameters.
+The IO model defines prediction model weights that minimize a measure of optimality of the original LP problem. 
+The prediction model thus makes predictions that minimize the downstream optimization cost. 
+This research seemed promising, but it was limited to LPs with uncertain costs only.
+
+After reviewing the literature and finding no existing solution that perfectly fit our problem, we attempted to apply methods not quite designed for our use case in the hope that they would work, or would provide insight into our ND problem. We found that issues with the definition of regret for problems with uncertain constraints explain why existing solutions do not work. 
+
+We first formulated our ND problem as a stochastic program with uncertain demands, and defined a general Prediction-Optimization pipeline that solves our ND problem. It makes a point prediction of the demand given the contextual information, and then solves an ND problem that fulfills that demand. We ran into the problem of evaluating the performance of a Prediction-Optimization pipeline and subsequently into the ill-definition of regret when the parameters are uncertain.
+Since predicting a different value for demand changes the feasible region of the optimization problem, we cannot directly compare the cost of solutions from two different predictions. 
+We developed an evaluation method that can compare solutions and that ensures the solution with the actual demand is the least costly. We did this by calculating the cost of fulfilling the actual demand over the network designed by the pipeline. We ensured the feasibility of each designed network by adding expensive recourse paths to the ND problem. We found that the formulation of regret when only the costs are uncertain cannot be used when the constraints are uncertain, because the feasible region can change depending on the prediction of the constraint parameters. Finding a definition of regret for uncertain constraints that is differentiable is difficult. This problem has so far not been addressed in the literature.  
+
+Before we discovered the issues with regret when the constraints are uncertain, we formulated \textit{IO-constraint}, an IO model that recovers the weights of a linear prediction model.
+We were hoping that it would be possible to recover weights that minimize downstream optimization cost. Our model does indeed recover constraint parameters, but optimizes for prediction accuracy and not downstream cost. We would have needed to use an optimality condition, but the one from \cite{sunMaximumOptimalityMargin2023} only applies to LPs with uncertain costs. Our experiments confirmed the fact that \textit{IO-Constraint} performs no better than a linear regression model.
+
+After recognizing the problems with \textit{IO-Constraint} and with the definition of regret, we explored ideas for performing DFL by reweighting observations.  The value of the loss function for each prediction would be weighted so that predictions that have a greater impact on downstream costs more heavily are weighted more heavily in the loss function. We have shown in an experiment that we can significantly improve downstream costs when the prediction model and the data model are misaligned by reweighting some observations. The difficulty with this method is finding the appropriate weights for each demand. We formulated W-DFL, a multilevel nonlinear optimization problem that defines weightings for the training examples that minimize regret. We developed an iterative method that updates the weights based on the contribution of the training example to the regret. It shows promising results in reducing regret on a small example network, but becomes unstable after a sufficient number of iterations.
+
+In this thesis, we set out to integrate the prediction and optimization steps for ND problems. We conducted a review of the literature in the fields of ND, DFL, and IO to find methods that would be applicable to our problem. This problem had not been attempted before, and we could not easily adapt existing techniques for uncertain costs and continuous variables to work on our problem. We explored new techniques that reweight observations in the loss, but they require more research. The main conclusion we drew from our study is that is that the definition of regret when the objective is uncertain does not apply when the constraints are uncertain. Expressing regret in our use case is much more complicated than previously expected, depends on the structure of the optimization problem, and is typically not differentiable.
+
+\section{Future work} \label{sec:conclusion:future-work}
+
+We suggest two important directions for future research: reweighting the observations and defining a regret-based loss suitable for problems with uncertain constraints. In the immediate future, we could further investigate the problem of reweighting the observations in the loss function. This method has shown promising results in this thesis, but does not yet have an efficient and accurate way to find the appropriate weights. The iterative weight update algorithm shows promising results, but does not converge to a minimum. In later work, we could develop methods that have stronger theoretical backing, similar to the Multiplicative Weights Algorithm \citep{multiweights}, and test them on larger and more realistic networks. In addition, we could try other techniques for solving the W-DFL problem, such as black-box optimization solvers like NOMAD.
+
+This work also uncovers an important, previously unexplored area of research: regret-based loss for problems with uncertain constraints. We could search for a definition of regret that yields meaningful results when the constraints are uncertain and that does not depend on the specifics of the optimization problem. Finding such a definition of regret that is also differentiable with respect to the solution would allow us to apply many existing DFL techniques to our problem.

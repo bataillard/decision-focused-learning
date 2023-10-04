@@ -1,0 +1,32 @@
+\begin{tikzpicture}
+    \coordinate (opt-c) at (3,4);
+    \coordinate (subopt-c) at (3,1);
+    
+    \coordinate (left-fzone) at (3.66, 6);
+    \coordinate (right-fzone) at (5.1, 4);
+    
+    \coordinate (cost) at (4.6, 4.4);
+    \coordinate (good-pred) at (3.86, 5.4);
+    \coordinate (bad-pred) at (4.6, 3.6);
+    
+    \filldraw[fill=gray!20, thick] (0,4.5) -- (opt-c) -- (subopt-c) -- (1,0) -- (-1.5, 2) -- (0, 4.5);
+
+    \fill[fill=gray!30, pattern=dots] (opt-c) -- (left-fzone) to[in=70, out=-90] (right-fzone) -- (opt-c);
+    \draw[dashed, thick] (opt-c) -- (left-fzone);
+    \draw[dashed, thick] (opt-c) -- (right-fzone);
+
+    \draw[very thick, ->] (opt-c) -- (cost);
+    \draw[thick, ->] (opt-c) -- (good-pred);
+    \draw[thick, ->] (opt-c) -- (bad-pred);
+
+    \node[fill, circle, scale=0.8] at (opt-c) (opt) {};
+    \node[fill, circle, scale=0.8] at (subopt-c) (subopt) {};
+    \node (opt-label) [left=1mm of opt] {$z^*(\bm{c}) = z^*(\bm{\hat{c}}_1)$};
+    \node (subopt-label) [left=0mm of subopt] {$z^*(\bm{\hat{c}}_2)$};
+    
+    \node (cost-label) [right=1mm of cost] {$\bm{c}$};
+    \node (good-pred-label) [right=1mm of good-pred] {$\hat{\bm{c}}_1 = f_{\theta_1}(\phib)$};
+    \node (bad-pred-label) [right=1mm of bad-pred] {$\hat{\bm{c}}_2 = f_{\theta_2}(\phib)$};
+
+    \node at (-0.3, 2.7) (feasible) {$\bm{\mathcal{Z}}$};
+\end{tikzpicture}

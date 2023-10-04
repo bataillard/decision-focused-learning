@@ -1,0 +1,900 @@
+@article{nomad4paper,
+  Author  = {C. Audet and S. {Le~Digabel} and V. {Rochon~Montplaisir} and C. Tribes},
+  Title   = {{Algorithm~1027: NOMAD version~4: Nonlinear optimization with the MADS algorithm}},
+  Journal = {{ACM} Transactions on Mathematical Software},
+  Volume  = {48},
+  Number  = {3},
+  Year    = {2022},
+  Pages   = {35:1--35:22},
+}
+
+
+@article{multiweights,
+ author = {Arora, Sanjeev and Hazan, Elad and Kale, Satyen},
+ title = {The Multiplicative Weights Update Method: a Meta-Algorithm and Applications},
+ year = {2012},
+ pages = {121--164},
+ publisher = {Theory of Computing},
+ journal = {Theory of Computing},
+ volume = {8},
+ number = {6},
+ URL = {https://theoryofcomputing.org/articles/v008a006},
+}
+
+@misc{agrawalDifferentiableConvexOptimization2019,
+  title = {Differentiable {{Convex Optimization Layers}}},
+  author = {Agrawal, Akshay and Amos, Brandon and Barratt, Shane and Boyd, Stephen and Diamond, Steven and Kolter, Zico},
+  year = {2019},
+  number = {arXiv:1910.12430},
+  eprint = {1910.12430},
+  primaryclass = {cs, math, stat},
+  publisher = {{arXiv}},
+  urldate = {2023-04-26},
+  abstract = {Recent work has shown how to embed differentiable optimization problems (that is, problems whose solutions can be backpropagated through) as layers within deep learning architectures. This method provides a useful inductive bias for certain problems, but existing software for differentiable optimization layers is rigid and difficult to apply to new settings. In this paper, we propose an approach to differentiating through disciplined convex programs, a subclass of convex optimization problems used by domain-specific languages (DSLs) for convex optimization. We introduce disciplined parametrized programming, a subset of disciplined convex programming, and we show that every disciplined parametrized program can be represented as the composition of an affine map from parameters to problem data, a solver, and an affine map from the solver's solution to a solution of the original problem (a new form we refer to as affine-solver-affine form). We then demonstrate how to efficiently differentiate through each of these components, allowing for end-to-end analytical differentiation through the entire convex program. We implement our methodology in version 1.1 of CVXPY, a popular Python-embedded DSL for convex optimization, and additionally implement differentiable layers for disciplined convex programs in PyTorch and TensorFlow 2.0. Our implementation significantly lowers the barrier to using convex optimization problems in differentiable programs. We present applications in linear machine learning models and in stochastic control, and we show that our layer is competitive (in execution time) compared to specialized differentiable solvers from past work.},
+  archiveprefix = {arxiv},
+  keywords = {comboptnet,Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\LEKTDQ8Z\\Agrawal et al. - 2019 - Differentiable Convex Optimization Layers.pdf;C\:\\Users\\Luca\\Zotero\\storage\\HSYIICXW\\1910.html}
+}
+
+@article{ahujaCombinatorialAlgorithmsInverse2002,
+  title = {Combinatorial Algorithms for Inverse Network Flow Problems},
+  author = {Ahuja, Ravindra K. and Orlin, James B.},
+  year = {2002},
+  journal = {Networks},
+  volume = {40},
+  number = {4},
+  pages = {181--187},
+  issn = {1097-0037},
+  doi = {10.1002/net.10048},
+  urldate = {2023-05-02},
+  abstract = {An inverse optimization problem is defined as follows: Let S denote the set of feasible solutions of an optimization problem P, let c be a specified cost vector, and x0 {$\in$} S. We want to perturb the cost vector c to d so that x0 is an optimal solution of P with respect to the cost vector d, and w{$\parallel$}d - c{$\parallel$}p is minimum, where {$\parallel$} {$\cdot$} {$\parallel$}p denotes some selected lp norm and w is a vector of weights. In this paper, we consider inverse minimum-cut and minimum-cost flow problems under the l1 normal (where the objective is to minimize {$\sum$}j{$\in$}Jwj|dj - cj| for some index set J of variables) and under the l{$\infty$} norm (where the objective is to minimize maxwj|dj - cj|: j {$\in$} J). We show that the unit weight (i.e., wj = 1 for all j {$\in$} J) inverse minimum-cut problem under the l1 norm reduces to solving a maximum-flow problem, and under the l{$\infty$} norm, it requires solving a polynomial sequence of minimum-cut problems. The unit weight inverse minimum-cost flow problem under the l1 norm reduces to solving a unit capacity minimum-cost circulation problem, and under the l{$\infty$} norm, it reduces to solving a minimum mean cycle problem. We also consider the nonunit weight versions of inverse minimum-cut and minimum-cost flow problems under the l{$\infty$} norm. \textcopyright{} 2002 Wiley Periodicals, Inc.},
+  langid = {english},
+  keywords = {inverse optimization,invopt,maximum-flow problem,minimax problems,minimum mean-cycle problem,minimum-cost flow problem,minimum-cut problem,promising,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\HN3CYQ36\\Ahuja and Orlin - 2002 - Combinatorial algorithms for inverse network flow .pdf;C\:\\Users\\Luca\\Zotero\\storage\\MCKYFLDM\\net.html}
+}
+
+@article{alonso-ayusoApproachStrategicSupply2003,
+  title = {An {{Approach}} for {{Strategic Supply Chain Planning}} under {{Uncertainty}} Based on {{Stochastic}} 0-1 {{Programming}}},
+  author = {{Alonso-Ayuso}, A. and Escudero, L.F. and Gar{\'i}n, A. and Ortu{\~n}o, M.T. and P{\'e}rez, G.},
+  year = {2003},
+  journal = {Journal of Global Optimization},
+  volume = {26},
+  number = {1},
+  pages = {97--124},
+  urldate = {2023-09-11},
+  abstract = {We present a two-stage stochastic 0-1 modeling and a related algorithmic approach for Supply Chain Management under uncertainty, whose goal consists of determining the production topology, plant sizing, product selection, product allocation among plants and vendor selection for raw materials. The objective is the maximization of the expected benefit given by the product net profit over the time horizon minus the investment depreciation and operations costs. The main uncertain parameters are the product net price and demand, the raw material supply cost and the production cost. The first stage is included by the strategic decisions. The second stage is included by the tactical decisions. A tight 0-1 model for the deterministic version is presented. A splitting variable mathematical representation via scenario is presented for the stochastic version of the model. A two-stage version of a Branch and Fix Coordination (BFC) algorithmic approach is proposed for stochastic 0-1 program solving, and some computational experience is reported for cases with dozens of thousands of constraints and continuous variables and hundreds of 0-1 variables.},
+  langid = {english},
+  keywords = {BoM,Branch-and-Fix Coordination,Plant sizing,Splitting variable,Strategic planning,Supply chain,Two-stage stochastic,Vendor selection},
+  file = {C:\Users\Luca\Zotero\storage\QPYIBG9L\Alonso-Ayuso et al. - 2003 - An Approach for Strategic Supply Chain Planning un.pdf}
+}
+
+@inproceedings{amosOptNetDifferentiableOptimization2021,
+  title={Optnet: Differentiable optimization as a layer in neural networks},
+  author={Amos, Brandon and Kolter, J Zico},
+  booktitle={International Conference on Machine Learning},
+  pages={136--145},
+  year={2017},
+  organization={PMLR}
+}
+
+@misc{balghitiGeneralizationBoundsPredictthenOptimize2022,
+  title = {Generalization {{Bounds}} in the {{Predict-then-Optimize Framework}}},
+  author = {Balghiti, Othman El and Elmachtoub, Adam N. and Grigas, Paul and Tewari, Ambuj},
+  year = {2022},
+  number = {arXiv:1905.11488},
+  eprint = {1905.11488},
+  primaryclass = {cs, stat},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1905.11488},
+  urldate = {2023-04-03},
+  abstract = {The predict-then-optimize framework is fundamental in many practical settings: predict the unknown parameters of an optimization problem, and then solve the problem using the predicted values of the parameters. A natural loss function in this environment is to consider the cost of the decisions induced by the predicted parameters, in contrast to the prediction error of the parameters. This loss function was recently introduced in Elmachtoub and Grigas (2022) and referred to as the Smart Predict-then-Optimize (SPO) loss. In this work, we seek to provide bounds on how well the performance of a prediction model fit on training data generalizes out-of-sample, in the context of the SPO loss. Since the SPO loss is non-convex and non-Lipschitz, standard results for deriving generalization bounds do not apply. We first derive bounds based on the Natarajan dimension that, in the case of a polyhedral feasible region, scale at most logarithmically in the number of extreme points, but, in the case of a general convex feasible region, have linear dependence on the decision dimension. By exploiting the structure of the SPO loss function and a key property of the feasible region, which we denote as the strength property, we can dramatically improve the dependence on the decision and feature dimensions. Our approach and analysis rely on placing a margin around problematic predictions that do not yield unique optimal solutions, and then providing generalization bounds in the context of a modified margin SPO loss function that is Lipschitz continuous. Finally, we characterize the strength property and show that the modified SPO loss can be computed efficiently for both strongly convex bodies and polytopes with an explicit extreme point representation.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\56VM8RMP\\Balghiti et al. - 2022 - Generalization Bounds in the Predict-then-Optimize.pdf;C\:\\Users\\Luca\\Zotero\\storage\\WGCQDG8F\\1905.html}
+}
+
+@misc{besbesContextualInverseOptimization2023,
+  title = {Contextual {{Inverse Optimization}}: {{Offline}} and {{Online Learning}}},
+  shorttitle = {Contextual {{Inverse Optimization}}},
+  author = {Besbes, Omar and Fonseca, Yuri and Lobel, Ilan},
+  year = {2023},
+  number = {arXiv:2106.14015},
+  eprint = {2106.14015},
+  primaryclass = {cs, math, stat},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2106.14015},
+  urldate = {2023-07-12},
+  abstract = {We study the problems of offline and online contextual optimization with feedback information, where instead of observing the loss, we observe, after-the-fact, the optimal action an oracle with full knowledge of the objective function would have taken. We aim to minimize regret, which is defined as the difference between our losses and the ones incurred by an all-knowing oracle. In the offline setting, the decision-maker has information available from past periods and needs to make one decision, while in the online setting, the decision-maker optimizes decisions dynamically over time based a new set of feasible actions and contextual functions in each period. For the offline setting, we characterize the optimal minimax policy, establishing the performance that can be achieved as a function of the underlying geometry of the information induced by the data. In the online setting, we leverage this geometric characterization to optimize the cumulative regret. We develop an algorithm that yields the first regret bound for this problem that is logarithmic in the time horizon. Finally, we show via simulation that our proposed algorithms outperform previous methods from the literature.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\46N2VBMV\\Besbes et al. - 2023 - Contextual Inverse Optimization Offline and Onlin.pdf;C\:\\Users\\Luca\\Zotero\\storage\\ZESAQSZY\\2106.html}
+}
+
+@book{bishopPatternRecognitionMachine2006,
+  title = {Pattern {{Recognition}} and {{Machine Learning}} ({{Information Science}} and {{Statistics}})},
+  author = {Bishop, Christopher M.},
+  year = {2006},
+  publisher = {{Springer-Verlag}},
+  address = {{Berlin, Heidelberg}},
+}
+
+@article{bodurInverseMixedInteger2021,
+  title={Inverse mixed integer optimization: Polyhedral insights and trust region methods},
+  author={Bodur, Merve and Chan, Timothy CY and Zhu, Ian Yihang},
+  journal={INFORMS Journal on Computing},
+  volume={34},
+  number={3},
+  pages={1471--1488},
+  year={2022},
+  publisher={INFORMS}
+}
+
+@article{bulutComplexityInverseMixed2021,
+  title = {On the {{Complexity}} of {{Inverse Mixed Integer Linear Optimization}}},
+  author = {Bulut, Aykut and Ralphs, Ted K.},
+  year = {2021},
+  journal = {SIAM Journal on Optimization},
+  volume = {31},
+  number = {4},
+  pages = {3014--3043},
+  issn = {1052-6234, 1095-7189},
+  doi = {10.1137/20M1377369},
+  urldate = {2023-05-01},
+  abstract = {Inverse optimization is the problem of determining the values of missing input parameters for an associated forward problem that are closest to given estimates and that will make a given target vector optimal. This study is concerned with the relationship of a particular inverse mixed integer linear optimization problem (MILP) to both the forward problem and the separation problem associated with its feasible region. We show that a decision version of the inverse MILP in which a primal bound is verified is coNP-complete, whereas primal bound verification for the associated forward problem is NP-complete, and that the optimal value verification problems for both the inverse problem and the associated forward problem are complete for the complexity class DP. We also describe a cutting-plane algorithm for solving inverse MILPs that illustrates the close relationship between the separation problem for the convex hull of solutions to a given MILP and the associated inverse problem. The inverse problem is shown to be equivalent to the separation problem for the radial cone defined by all inequalities that are both valid for the convex hull of solutions to the forward problem and binding at the target vector. Thus, the inverse, forward, and separation problems can be said to be equivalent.},
+  langid = {english},
+  keywords = {promising,unread},
+  file = {C:\Users\Luca\Zotero\storage\ZG8PJ9GG\Bulut and Ralphs - 2021 - On the Complexity of Inverse Mixed Integer Linear .pdf}
+}
+
+@article{burtonInstanceInverseShortest1992,
+  title = {On an Instance of the Inverse Shortest Paths Problem},
+  author = {Burton, D. and Toint, {\relax Ph}. L.},
+  year = {1992},
+  journal = {Mathematical Programming},
+  volume = {53},
+  number = {1},
+  pages = {45--61},
+  urldate = {2023-06-13},
+  abstract = {The inverse shortest paths problem in a graph is considered, that is, the problem of recovering the arc costs given some information about the shortest paths in the graph. The problem is first motivated by some practical examples arising from applications. An algorithm based on the Goldfarb-Idnani method for convex quadratic programming is then proposed and analyzed for one of the instances of the problem. Preliminary numerical results are reported.},
+  langid = {english},
+  keywords = {Graph theory,inverse problems,invopt; unread,quadratic programming,shortest paths},
+  file = {C:\Users\Luca\Zotero\storage\YDCFKLPU\Burton and Toint - 1992 - On an instance of the inverse shortest paths probl.pdf}
+}
+
+@article{cadarsoStrategicMultistageOperational2018,
+  title = {On Strategic Multistage Operational Two-Stage Stochastic 0\textendash 1 Optimization for the {{Rapid Transit Network Design}} Problem},
+  author = {Cadarso, Luis and Escudero, Laureano F. and Mar{\'i}n, Angel},
+  year = {2018},
+  journal = {European Journal of Operational Research},
+  volume = {271},
+  number = {2},
+  pages = {577--593},
+  urldate = {2023-09-12},
+  abstract = {The Rapid Transit Network Design planning problem along a time horizon is treated by considering uncertainty in passenger demand, strategic costs and network disruption. The problem has strategic decisions about the timing to construct stations and edges, and operational decisions on the available network at the periods. The uncertainty in the strategic side is represented in a multistage scenario tree, while the uncertainty in the operational side is represented in two-stage scenario trees which are rooted with strategic nodes. The 0\textendash 1 deterministic equivalent model can have very large dimensions. So-called fix-and-relax and lazy matheuristic algorithms, which are based on special features of the problem, are proposed, jointly with dynamic scenario aggregation/de-aggregation schemes. A broad computational experience is presented by considering a network case study taken from the literature, where the problem was only treated as a deterministic 0\textendash 1 model. 40 nodes in the strategic multistage tree are considered for passenger demand and investment cost and 8 uncertainties are considered for network disruption in each strategic node, in total 320 uncertain situations are jointly considered. For assessing the validity of the proposal, a computational comparison is performed between the plain use of a state-of-the-art optimization solver and the proposals made in this work. The model is so-large (2.6M constraints and 1.6M binary variables) that the solver alone cannot provide a solution in an affordable time. However, a mixture of the both matheuristics provides a solution with a good optimality gap requiring an affordable elapsed time.},
+  keywords = {Matheuristic algorithms,multistage multi-horizon scenario trees,Pure 0\textendash 1 models,Rapid Transit Network Design planning,Transportation},
+  file = {C:\Users\Luca\Zotero\storage\47PQV43K\S0377221718304521.html}
+}
+
+@book{castiglioneActivitybasedTravelDemand2015,
+  title = {Activity-Based Travel Demand Models: A Primer},
+  shorttitle = {Activity-Based Travel Demand Models},
+  author = {Castiglione, Joe},
+  year = {2015},
+  publisher = {{Transportation Research Board}},
+  address = {{Washington, DC}},
+  isbn = {978-0-309-27399-2},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\I8S548SJ\Castiglione - 2015 - Activity-based travel demand models a primer.pdf}
+}
+
+@article{chanInverseOptimizationRecovery2020,
+  title = {Inverse Optimization for the Recovery of Constraint Parameters},
+  author = {Chan, Timothy C. Y. and Kaw, Neal},
+  year = {2020},
+  journal = {European Journal of Operational Research},
+  volume = {282},
+  number = {2},
+  pages = {415--427},
+  urldate = {2023-04-04},
+  abstract = {Most inverse optimization models impute unspecified parameters of an objective function to make an observed solution optimal for a given optimization problem with a fixed feasible set. We propose two approaches to impute unspecified left-hand-side constraint coefficients in addition to a cost vector for a given linear optimization problem. The first approach identifies parameters minimizing the duality gap, while the second minimally perturbs prior estimates of the unspecified parameters to satisfy strong duality, if it is possible to satisfy the optimality conditions exactly. We apply these two approaches to the general linear optimization problem. We also use them to impute unspecified parameters of the uncertainty set for robust linear optimization problems under interval and cardinality constrained uncertainty. Each inverse optimization model we propose is nonconvex, but we show that a globally optimal solution can be obtained either in closed form or by solving a linear number of linear or convex optimization problems.},
+  langid = {english},
+  keywords = {Inverse optimization,invopt,lessrel,Linear programming,Parameter estimation,read,researchproposal-lessrel,Robust optimization},
+  file = {C:\Users\Luca\Zotero\storage\D87LJCWU\Chan and Kaw - 2020 - Inverse optimization for the recovery of constrain.pdf}
+}
+
+@article{chanInverseOptimizationTheory2022,
+  title={Inverse optimization: Theory and applications},
+  author={Chan, Timothy CY and Mahmood, Rafid and Zhu, Ian Yihang},
+  journal={arXiv preprint arXiv:2109.03920},
+  year={2021}
+}
+
+@book{crainicNetworkDesignApplications2021,
+  title = {Network {{Design}} with {{Applications}} to {{Transportation}} and {{Logistics}}},
+  author = {Crainic, Teodor Gabriel and Gendreau, Michel and Gendron, Bernard},
+  year = {2021},
+  publisher = {{Springer International Publishing}},
+  address = {{Cham}},
+  urldate = {2023-04-04},
+  langid = {english},
+  keywords = {City Logistics,Fixed-Cost Network Design,Logistics,Logistics Networks,Multi-Facility Network Design,Network Design,Rail Network,Transportation,unread},
+  file = {C:\Users\Luca\Zotero\storage\BVHGFQGQ\Crainic et al. - 2021 - Network Design with Applications to Transportation.pdf}
+}
+
+@misc{dalleLearningCombinatorialOptimization2022,
+  title = {Learning with {{Combinatorial Optimization Layers}}: A {{Probabilistic Approach}}},
+  shorttitle = {Learning with {{Combinatorial Optimization Layers}}},
+  author = {Dalle, Guillaume and Baty, L{\'e}o and Bouvier, Louis and Parmentier, Axel},
+  year = {2022},
+  number = {arXiv:2207.13513},
+  eprint = {2207.13513},
+  primaryclass = {cs, math, stat},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2207.13513},
+  urldate = {2023-04-06},
+  abstract = {Combinatorial optimization (CO) layers in machine learning (ML) pipelines are a powerful tool to tackle data-driven decision tasks, but they come with two main challenges. First, the solution of a CO problem often behaves as a piecewise constant function of its objective parameters. Given that ML pipelines are typically trained using stochastic gradient descent, the absence of slope information is very detrimental. Second, standard ML losses do not work well in combinatorial settings. A growing body of research addresses these challenges through diverse methods. Unfortunately, the lack of well-maintained implementations slows down the adoption of CO layers. In this paper, building upon previous works, we introduce a probabilistic perspective on CO layers, which lends itself naturally to approximate differentiation and the construction of structured losses. We recover many approaches from the literature as special cases, and we also derive new ones. Based on this unifying perspective, we present InferOpt.jl, an open-source Julia package that 1) allows turning any CO oracle with a linear objective into a differentiable layer, and 2) defines adequate losses to train pipelines containing such layers. Our library works with arbitrary optimization algorithms, and it is fully compatible with Julia's ML ecosystem. We demonstrate its abilities using a pathfinding problem on video game maps as guiding example, as well as three other applications from operations research.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control,promising,Statistics - Machine Learning,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\NKU3C7TH\\Dalle et al. - 2022 - Learning with Combinatorial Optimization Layers a.pdf;C\:\\Users\\Luca\\Zotero\\storage\\QPD6JSYF\\2207.html}
+}
+
+@article{degooijer25YearsTime2006,
+  title = {25 Years of Time Series Forecasting},
+  author = {De Gooijer, Jan G. and Hyndman, Rob J.},
+  year = {2006},
+  journal = {International Journal of Forecasting},
+  series = {Twenty Five Years of Forecasting},
+  volume = {22},
+  number = {3},
+  pages = {443--473},
+  urldate = {2023-08-09},
+  abstract = {We review the past 25 years of research into time series forecasting. In this silver jubilee issue, we naturally highlight results published in journals managed by the International Institute of Forecasters (Journal of Forecasting 1982\textendash 1985 and International Journal of Forecasting 1985\textendash 2005). During this period, over one third of all papers published in these journals concerned time series forecasting. We also review highly influential works on time series forecasting that have been published elsewhere during this period. Enormous progress has been made in many areas, but we find that there are a large number of topics in need of further development. We conclude with comments on possible future research directions in this field.},
+  langid = {english},
+  keywords = {Accuracy measures,ARCH,ARIMA,Combining,Count data,Densities,Exponential smoothing,Kalman filter,Long memory,Multivariate,Neural nets,Nonlinearity,Prediction intervals,Regime-switching,Robustness,Seasonality,State space,Structural models,Transfer function,Univariate,VAR},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\CTMF67E3\\De Gooijer and Hyndman - 2006 - 25 years of time series forecasting.pdf;C\:\\Users\\Luca\\Zotero\\storage\\G54RTWQR\\S0169207006000021.html}
+}
+
+@inproceedings{dontiTaskbasedEndtoendModel2017,
+  title = {Task-Based {{End-to-end Model Learning}} in {{Stochastic Optimization}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Donti, Priya and Amos, Brandon and Kolter, J. Zico},
+  year = {2017},
+  volume = {30},
+  publisher = {{Curran Associates, Inc.}},
+  urldate = {2023-04-03},
+  abstract = {With the increasing popularity of machine learning techniques, it has become common to see prediction algorithms operating within some larger process. However, the criteria by which we train these algorithms often differ from the ultimate criteria on which we evaluate them. This paper proposes an end-to-end approach for learning probabilistic machine learning models in a manner that directly captures the ultimate task-based objective for which they will be used, within the context of stochastic programming. We present three experimental evaluations of the proposed approach: a classical inventory stock problem, a real-world electrical grid scheduling task, and a real-world energy storage arbitrage task. We show that the proposed approach can outperform both traditional modeling and purely black-box policy optimization approaches in these applications.},
+  keywords = {unread},
+  file = {C:\Users\Luca\Zotero\storage\LSAL37T5\Donti et al. - 2017 - Task-based End-to-end Model Learning in Stochastic.pdf}
+}
+
+@misc{elmachtoubDecisionTreesDecisionMaking2020,
+  title = {Decision {{Trees}} for {{Decision-Making}} under the {{Predict-then-Optimize Framework}}},
+  author = {Elmachtoub, Adam N. and Liang, Jason Cheuk Nam and McNellis, Ryan},
+  year = {2020},
+  number = {arXiv:2003.00360},
+  eprint = {2003.00360},
+  primaryclass = {cs, math, stat},
+  publisher = {{arXiv}},
+  urldate = {2023-04-11},
+  abstract = {We consider the use of decision trees for decision-making problems under the predict-then-optimize framework. That is, we would like to first use a decision tree to predict unknown input parameters of an optimization problem, and then make decisions by solving the optimization problem using the predicted parameters. A natural loss function in this framework is to measure the suboptimality of the decisions induced by the predicted input parameters, as opposed to measuring loss using input parameter prediction error. This natural loss function is known in the literature as the Smart Predict-then-Optimize (SPO) loss, and we propose a tractable methodology called SPO Trees (SPOTs) for training decision trees under this loss. SPOTs benefit from the interpretability of decision trees, providing an interpretable segmentation of contextual features into groups with distinct optimal solutions to the optimization problem of interest. We conduct several numerical experiments on synthetic and real data including the prediction of travel times for shortest path problems and predicting click probabilities for news article recommendation. We demonstrate on these datasets that SPOTs simultaneously provide higher quality decisions and significantly lower model complexity than other machine learning approaches (e.g., CART) trained to minimize prediction error.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning,decisiontrees,Mathematics - Optimization and Control,Statistics - Machine Learning,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\VRHY64TZ\\Elmachtoub et al. - 2020 - Decision Trees for Decision-Making under the Predi.pdf;C\:\\Users\\Luca\\Zotero\\storage\\2S6F5JB6\\2003.html}
+}
+
+@article{elmachtoubSmartPredictThen2022,
+  title = {Smart ``{{Predict}}, Then {{Optimize}}''},
+  author = {Elmachtoub, Adam N. and Grigas, Paul},
+  year = {2022},
+  journal = {Management Science},
+  volume = {68},
+  number = {1},
+  pages = {9--26},
+  publisher = {{INFORMS}},
+  urldate = {2023-04-03},
+  abstract = {Many real-world analytics problems involve two significant challenges: prediction and optimization. Because of the typically complex nature of each challenge, the standard paradigm is predict-then-optimize. By and large, machine learning tools are intended to minimize prediction error and do not account for how the predictions will be used in the downstream optimization problem. In contrast, we propose a new and very general framework, called Smart ``Predict, then Optimize'' (SPO), which directly leverages the optimization problem structure\textemdash that is, its objective and constraints\textemdash for designing better prediction models. A key component of our framework is the SPO loss function, which measures the decision error induced by a prediction. Training a prediction model with respect to the SPO loss is computationally challenging, and, thus, we derive, using duality theory, a convex surrogate loss function, which we call the SPO+ loss. Most importantly, we prove that the SPO+ loss is statistically consistent with respect to the SPO loss under mild conditions. Our SPO+ loss function can tractably handle any polyhedral, convex, or even mixed-integer optimization problem with a linear objective. Numerical experiments on shortest-path and portfolio-optimization problems show that the SPO framework can lead to significant improvement under the predict-then-optimize paradigm, in particular, when the prediction model being trained is misspecified. We find that linear models trained using SPO+ loss tend to dominate random-forest algorithms, even when the ground truth is highly nonlinear. This paper was accepted by Yinyu Ye, optimization. Supplemental Material: Data and the online appendix are available at https://doi.org/10.1287/mnsc.2020.3922},
+  keywords = {data-driven optimization,linear regression,machine learning,prescriptive analytics,prethesis,read,spo},
+  file = {C:\Users\Luca\Zotero\storage\9AQJ7E9U\Elmachtoub and Grigas - 2022 - Smart “Predict, then Optimize”.pdf}
+}
+
+@article{fajemisinOptimizationConstraintLearning2023,
+  title = {Optimization with Constraint Learning: {{A}} Framework and Survey},
+  shorttitle = {Optimization with Constraint Learning},
+  author = {Fajemisin, Adejuyigbe O. and Maragno, Donato and {den Hertog}, Dick},
+  year = {2023},
+  journal = {European Journal of Operational Research},
+  urldate = {2023-05-19},
+  abstract = {Many real-life optimization problems frequently contain one or more constraints or objectives for which there are no explicit formulae. If however data on feasible and/or infeasible states are available, these data can be used to learn the constraints. The benefits of this approach are clearly seen, however, there is a need for this process to be carried out in a structured manner. This paper, therefore, provides a framework for Optimization with Constraint Learning (OCL) which we believe will help to formalize and direct the process of learning constraints from data. This framework includes the following steps: (i) setup of the conceptual optimization model, (ii) data gathering and preprocessing, (iii) selection and training of predictive models, (iv) resolution of the optimization model, and (v) verification and improvement of the optimization model. We then review the recent OCL literature in light of this framework and highlight current trends, as well as areas for future research.},
+  langid = {english},
+  keywords = {Analytics,Constraint learning,Machine learning,Optimization,promising,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\UWA48K8B\\Fajemisin et al. - 2023 - Optimization with constraint learning A framework.pdf;C\:\\Users\\Luca\\Zotero\\storage\\GVJE3RSC\\S0377221723003405.html}
+}
+
+@article{ferberMIPaaLMixedInteger2020,
+  title = {{{MIPaaL}}: {{Mixed Integer Program}} as a {{Layer}}},
+  shorttitle = {{{MIPaaL}}},
+  author = {Ferber, Aaron and Wilder, Bryan and Dilkina, Bistra and Tambe, Milind},
+  year = {2020},
+  journal = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume = {34},
+  number = {02},
+  pages = {1504--1511},
+  urldate = {2023-04-04},
+  abstract = {Machine learning components commonly appear in larger decision-making pipelines; however, the model training process typically focuses only on a loss that measures average accuracy between predicted values and ground truth values. Decision-focused learning explicitly integrates the downstream decision problem when training the predictive model, in order to optimize the quality of decisions induced by the predictions. It has been successfully applied to several limited combinatorial problem classes, such as those that can be expressed as linear programs (LP), and submodular optimization. However, these previous applications have uniformly focused on problems with simple constraints. Here, we enable decision-focused learning for the broad class of problems that can be encoded as a mixed integer linear program (MIP), hence supporting arbitrary linear constraints over discrete and continuous variables. We show how to differentiate through a MIP by employing a cutting planes solution approach, an algorithm that iteratively tightens the continuous relaxation by adding constraints removing fractional solutions. We evaluate our new end-to-end approach on several real world domains and show that it outperforms the standard two phase approaches that treat prediction and optimization separately, as well as a baseline approach of simply applying decision-focused learning to the LP relaxation of the MIP. Lastly, we demonstrate generalization performance in several transfer learning tasks.},
+  copyright = {Copyright (c) 2020 Association for the Advancement of Artificial Intelligence},
+  langid = {english},
+  keywords = {read,researchproposal},
+  file = {C:\Users\Luca\Zotero\storage\V6RJLSBJ\Ferber et al. - 2020 - MIPaaL Mixed Integer Program as a Layer.pdf}
+}
+
+@incollection{gendronMulticommodityCapacitatedNetwork1999a,
+  title = {Multicommodity {{Capacitated Network Design}}},
+  booktitle = {Telecommunications {{Network Planning}}},
+  author = {Gendron, Bernard and Crainic, Teodor Gabriel and Frangioni, Antonio},
+  editor = {Sans{\`o}, Brunilde and Soriano, Patrick},
+  year = {1999},
+  pages = {1--19},
+  publisher = {{Springer US}},
+  address = {{Boston, MA}},
+  abstract = {This paper presents a comprehensive survey of models and algorithms for multicommodity capacitated network design problems, which are mostly encountered in telecommunications and transportation network planning. These problems are important not only due to the major relevance of their applications, but also because they pose considerable modeling and algorithmic challenges. We present a general arc-based model, describe useful alternative formulations and survey the literature on simplex-based cutting plane and Lagrangean relaxation approaches. We then focus on our own contributions that develop and compare several relaxation methods for a particular case of this model, the xed-charge problem. These methods are based on Lagrangean relaxation and nondi erentiable optimization techniques, namely, the subgradient and bundle approaches. Our experimental results, while very encouraging, indicate that solving e ciently these di cult problems requires a judicious combination of cutting planes, Lagrangean relaxation methods and sophisticated heuristics. In addition, due to their inherent decomposition properties, these techniques can be adapted to parallel computing environments, which is highly desirable in order to solve realistically sized instances.},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\KU8HI2WD\Gendron et al. - 1999 - Multicommodity Capacitated Network Design.pdf}
+}
+
+@inproceedings{gendronRELAXATIONSMULTICOMMODITYCAPACITATED1994,
+  title = {{{RELAXATIONS FOR MULTICOMMODITY CAPACITATED NETWORK DESIGN PROBLEMS}}.},
+  author = {Gendron, B. and Crainic, T.},
+  year = {1994},
+  urldate = {2023-09-12},
+  abstract = {Semantic Scholar extracted view of "RELAXATIONS FOR MULTICOMMODITY CAPACITATED NETWORK DESIGN PROBLEMS." by B. Gendron et al.},
+  keywords = {nd}
+}
+
+@article{ghobadiInferringLinearFeasible2021,
+  title = {Inferring Linear Feasible Regions Using Inverse Optimization},
+  author = {Ghobadi, Kimia and Mahmoudzadeh, Houra},
+  year = {2021},
+  journal = {European Journal of Operational Research},
+  volume = {290},
+  number = {3},
+  pages = {829--843},
+  urldate = {2023-04-04},
+  abstract = {Consider a problem where a set of feasible observations are provided by an expert, and a cost function exists that characterizes which of the observations dominate the others and are hence, preferred. Assume the expert has an implicit optimization model in mind to identify the feasible observations, but the explicit constraints of this underlying model are unknown. Our goal is to infer the feasible region of such an optimization model that would render these observations feasible while making the best ones optimal for the cost (objective) function. Such feasible regions (i) build a baseline for a systematic categorization of future observations, and (ii) allow for using sensitivity analysis to discern changes in optimal solutions if the objective function changes in the future. In this paper, we propose a general inverse optimization methodology that recovers the complete constraint matrix of a linear model and then introduce a tractable equivalent reformulation. Furthermore, we provide and discuss several generalized loss functions to inform the desirable properties of the feasible region based on user preference and historical data. We demonstrate our approach using numerical examples and a realistic diet recommendation case study for imputing personalized diets. Our numerical examples verify the validity of our approach and emphasize the differences among the proposed loss functions. The diet recommendation case study shows that the proposed models can improve the palatability of the recommended diets for each user, and it provides further intuition for large-scale implementations of the proposed methodology.},
+  langid = {english},
+  keywords = {Diet recommendation,Feasible region inference,Inverse optimization,invopt,Linear programming,Loss function,read},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\ZMYP97VM\\Ghobadi and Mahmoudzadeh - 2021 - Inferring linear feasible regions using inverse op.pdf;C\:\\Users\\Luca\\Zotero\\storage\\CY2UIQQP\\S037722172030761X.html}
+}
+
+@article{gomoryMultiTerminalNetworkFlows1961,
+  title = {Multi-{{Terminal Network Flows}}},
+  author = {Gomory, R. E. and Hu, T. C.},
+  year = {1961},
+  journal = {Journal of the Society for Industrial and Applied Mathematics},
+  volume = {9},
+  number = {4},
+  pages = {551--570},
+  urldate = {2023-09-11},
+  langid = {english}
+}
+
+@misc{grigasIntegratedConditionalEstimationOptimization2022,
+  title = {Integrated {{Conditional Estimation-Optimization}}},
+  author = {Grigas, Paul and Qi, Meng and {Zuo-Jun} and Shen},
+  year = {2022},
+  number = {arXiv:2110.12351},
+  eprint = {2110.12351},
+  primaryclass = {cs, stat},
+  publisher = {{arXiv}},
+  abstract = {Many real-world optimization problems involve uncertain parameters with probability distributions that can be estimated using contextual feature information. In contrast to the standard approach of first estimating the distribution of uncertain parameters and then optimizing the objective based on the estimation, we propose an \textbackslash textit\{integrated conditional estimation-optimization\} (ICEO) framework that estimates the underlying conditional distribution of the random parameter while considering the structure of the optimization problem. We directly model the relationship between the conditional distribution of the random parameter and the contextual features, and then estimate the probabilistic model with an objective that aligns with the downstream optimization problem. We show that our ICEO approach is asymptotically consistent under moderate regularity conditions and further provide finite performance guarantees in the form of generalization bounds. Computationally, performing estimation with the ICEO approach is a non-convex and often non-differentiable optimization problem. We propose a general methodology for approximating the potentially non-differentiable mapping from estimated conditional distribution to optimal decision by a differentiable function, which greatly improves the performance of gradient-based algorithms applied to the non-convex problem. We also provide a polynomial optimization solution approach in the semi-algebraic case. Numerical experiments are also conducted to show the empirical success of our approach in different situations including with limited data samples and model mismatches.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\K6QLMLTQ\\Grigas et al. - 2022 - Integrated Conditional Estimation-Optimization.pdf;C\:\\Users\\Luca\\Zotero\\storage\\WBJSD5HN\\2110.html}
+}
+
+@article{gulerCapacityInverseMinimum2010,
+  title = {Capacity Inverse Minimum Cost Flow Problem},
+  author = {G{\"u}ler, {\c C}i{\u g}dem and Hamacher, Horst W.},
+  year = {2010},
+  journal = {Journal of Combinatorial Optimization},
+  volume = {19},
+  number = {1},
+  pages = {43--59},
+  urldate = {2023-05-02},
+  abstract = {Given a directed graph G=(N,A) with arc capacities uijand a minimum cost flow problem defined on G, the capacity inverse minimum cost flow problem is to find a new capacity vector \$\textbackslash hat\{u\}\$for the arc set A such that a given feasible flow \$\textbackslash hat\{x\}\$is optimal with respect to the modified capacities. Among all capacity vectors \$\textbackslash hat\{u\}\$satisfying this condition, we would like to find one with minimum \$\textbackslash |\textbackslash hat\{u\}-u\textbackslash |\$value.},
+  langid = {english},
+  keywords = {Inverse problems,invopt,Minimum cost flows,Network flows,promising,unread},
+  file = {C:\Users\Luca\Zotero\storage\Z5GCJU4V\Güler and Hamacher - 2010 - Capacity inverse minimum cost flow problem.pdf}
+}
+
+@article{gurSurgicalOperationScheduling2019,
+  title = {Surgical {{Operation Scheduling}} with {{Goal Programming}} and {{Constraint Programming}}: {{A Case Study}}},
+  shorttitle = {Surgical {{Operation Scheduling}} with {{Goal Programming}} and {{Constraint Programming}}},
+  author = {G{\"u}r, {\c S}eyda and Eren, Tamer and Alaka{\c s}, Hac{\i}},
+  year = {2019},
+  journal = {Mathematics},
+  volume = {7},
+  number = {3},
+  pages = {251},
+  issn = {2227-7390},
+  doi = {10.3390/math7030251},
+  urldate = {2022-03-17},
+  abstract = {The achievement of health organizations' goals is critically important for profitability. For this purpose, their resources, materials, and equipment should be efficiently used in the services they provide. A hospital has sensitive and expensive equipment, and the use of its equipment and resources needs to be balanced. The utilization of these resources should be considered in its operating rooms, as it shares both expense expenditure and revenue generation. This study's primary aim is the effective and balanced use of equipment and resources in hospital operating rooms. In this context, datasets from a state hospital were used via the goal programming and constraint programming methods. According to the wishes of hospital managers, three scenarios were separately modeled in both methods. According to the obtained results, schedules were compared and analyzed according to the current situation. The hospital-planning approach was positively affected, and goals such as minimization cost, staff and patient satisfaction, prevention over time, and less use were achieved.},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\FHKFIFHI\Gür et al. - 2019 - Surgical Operation Scheduling with Goal Programmin.pdf}
+}
+
+@article{hewittDatadrivenOptimizationModel2020,
+  title = {Data-Driven Optimization Model Customization},
+  author = {Hewitt, Mike and Frejinger, Emma},
+  year = {2020},
+  journal = {European Journal of Operational Research},
+  volume = {287},
+  number = {2},
+  pages = {438--451},
+  issn = {0377-2217},
+  doi = {10.1016/j.ejor.2020.05.010},
+  urldate = {2023-05-26},
+  abstract = {When embedded in software-based decision support systems, optimization models can greatly improve organizational planning. In many industries, there are classical models that capture the fundamentals of general planning decisions (e.g., designing a delivery route). However, these models are generic and often require customization to truly reflect the realities of specific operational settings. Yet, such customization can be an expensive and time-consuming process. At the same time, popular cloud computing software platforms such as Software as a Service (SaaS) are not amenable to customized software applications. We present a framework that has the potential to autonomously customize optimization models by learning mathematical representations of customer-specific business rules from historical data derived from model solutions and implemented plans. Because of the wide-spread use in practice of mixed integer linear programs (MILP) and the power of MILP solvers, the framework is designed for MILP models. It uses a common mathematical representation for different optimization models and business rules, which it encodes in a standard data structure. As a result, a software provider employing this framework can develop and maintain a single code-base while meeting the needs of different customers. We assess the effectiveness of this framework on multiple classical MILPs used in the planning of logistics and supply chain operations and with different business rules that must be observed by implementable plans. Computational experiments based on synthetic data indicate that solutions to the customized optimization models produced by the framework are regularly of high-quality.},
+  langid = {english},
+  keywords = {Decision support systems,Mixed integer linear programming,Optimization modeling,Statistical learning},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\7A4NSUVA\\Hewitt and Frejinger - 2020 - Data-driven optimization model customization.pdf;C\:\\Users\\Luca\\Zotero\\storage\\WRFL8R7Y\\S0377221720304215.html}
+}
+
+@article{hirschFixedChargeProblem1968,
+  title = {The Fixed Charge Problem},
+  author = {Hirsch, Warren M. and Dantzig, George B.},
+  year = {1968},
+  journal = {Naval Research Logistics Quarterly},
+  volume = {15},
+  number = {3},
+  pages = {413--424},
+  urldate = {2023-09-11},
+  abstract = {A fundamental unsolved problem in the programming area is one in which various activities have fixed charges (e.g., set-up time charges) if operating at a positive level. Properties of a general solution to this type problem are discussed in this paper. Under special circumstances it is shown that a fixed charge problem can be reduced to an ordinary linear programming problem.},
+  copyright = {Copyright \textcopyright{} 1968 Wiley Periodicals, Inc., A Wiley Company},
+  langid = {english},
+  keywords = {nd},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\ZDVPMCUP\\Hirsch et Dantzig - 1968 - The fixed charge problem.pdf;C\:\\Users\\Luca\\Zotero\\storage\\GV3G6N8J\\nav.html}
+}
+
+@article{hookerLogicOptimizationConstraint2002,
+  title = {Logic, {{Optimization}}, and {{Constraint Programming}}},
+  author = {Hooker, John N.},
+  year = {2002},
+  journal = {INFORMS Journal on Computing},
+  volume = {14},
+  number = {4},
+  pages = {295--321},
+  urldate = {2022-03-17},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\IC3WHV66\Hooker - 2002 - Logic, Optimization, and Constraint Programming.pdf}
+}
+
+@misc{instituteforpure&appliedmathematicsipamTiasGunsPrediction2023,
+  title = {Tias {{Guns}} - {{Prediction}} + {{Optimisation}}: Without and with Decision-Focused Learning - {{IPAM}} at {{UCLA}}},
+  shorttitle = {Tias {{Guns}} - {{Prediction}} + {{Optimisation}}},
+  author = {{Institute for Pure \& Applied Mathematics (IPAM)}},
+  year = {2023},
+  urldate = {2023-04-03},
+  abstract = {Recorded 02 March 2023. Tias Guns of KU Leuven presents "Prediction + Optimisation: without and with decision-focused learning" at IPAM's Artificial Intelligence and Discrete Optimization Workshop. Abstract: Industry and society are increasingly automating processes, which requires solving combinatorial optimisation problems. To find not just optimal solutions, but also 'desirable' solutions for the end user, it is increasingly important to offer AI tools that automatically learn from the user and the environment and that support the constraint modelling in interpretable ways. In this talk I will provide an overview of three different ways in which AI can augment the modeling part of combinatorial optimisation. This includes learning from the user (preference learning in VRP), learning from the environment (end-to-end decision focussed learning) and explanation generation, that sit at the intersection of learning and reasoning. As part of this work, we are building a modern constraint programming language called CPMpy(http://cpmpy.readthedocs.io) that eases integration of multiple constraint solving paradigms with machine learning and other scientific python libraries. I will shortly highlight its possibilities beyond the above cases, as well as our larger vision of conversational human-aware technology for optimisation. Learn more online at: http://www.ipam.ucla.edu/programs/wor...},
+  keywords = {tutorial,unread,video}
+}
+
+@phdthesis{karushMinimaFunctionsSeveral1939,
+  title = {Minima of Functions of Several Variables with Inequalities as Side Conditions},
+  author = {Karush, William},
+  year = {1939},
+  urldate = {2023-09-12},
+  school = {University of Chicago},
+  keywords = {Functions},
+  annotation = {OCLC: 43268508}
+}
+
+@article{kosterRobustNetworkDesign2013,
+  title={Robust network design: Formulations, valid inequalities, and computations},
+  author={Koster, Arie MCA and Kutschka, Manuel and Raack, Christian},
+  journal={Networks},
+  volume={61},
+  number={2},
+  pages={128--149},
+  year={2013},
+  publisher={Wiley Online Library}
+}
+
+@inproceedings{kotaryEndtoEndConstrainedOptimization2021,
+  title     = {End-to-End Constrained Optimization Learning: A Survey},
+  author    = {Kotary, James and Fioretto, Ferdinando and Van Hentenryck, Pascal and Wilder, Bryan},
+  booktitle = {Proceedings of the Thirtieth International Joint Conference on
+               Artificial Intelligence, {IJCAI-21}},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  pages     = {4475--4482},
+  year      = {2021},
+}
+
+@article{kotaryFoldedOptimizationEndtoEnd2023,
+  title={Folded optimization for end-to-end model-based learning},
+  author={Kotary, James and Dinh, My H and Fioretto, Ferdinando},
+  journal={arXiv preprint arXiv:2301.12047},
+  year={2023}
+}
+
+@incollection{kuhnNonlinearProgramming1951,
+  title = {Nonlinear {{Programming}}},
+  booktitle = {Proceedings of the {{Second Berkeley Symposium}} on {{Mathematical Statistics}} and {{Probability}}},
+  author = {Kuhn, H. W. and Tucker, A. W.},
+  year = {1951},
+  volume = {2},
+  pages = {481--493},
+  publisher = {{University of California Press}},
+  urldate = {2023-09-12},
+  file = {C:\Users\Luca\Zotero\storage\WM6ZI7FB\Kuhn and Tucker - 1951 - Nonlinear Programming.pdf}
+}
+
+@article{laagePeriodicFreightDemand2022,
+  title={Periodic Freight Demand Estimation for Large-scale Tactical Planning},
+  author={Laage, Greta and Frejinger, Emma and Savard, Gilles},
+  journal={arXiv preprint arXiv:2105.09136},
+  year={2021}
+}
+
+@misc{laageTwostepHeuristicPeriodic2021,
+  title = {A {{Two-step Heuristic}} for the {{Periodic Demand Estimation Problem}}},
+  author = {Laage, Greta and Frejinger, Emma and Savard, Gilles},
+  year = {2021},
+  number = {arXiv:2108.08331},
+  eprint = {2108.08331},
+  primaryclass = {cs, math},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2108.08331},
+  urldate = {2023-04-03},
+  abstract = {Freight carriers rely on tactical plans to satisfy demand in a cost-effective way. For computational tractability in real large-scale settings, such plans are typically computed by solving deterministic and cyclic formulations. An important input is the periodic demand, i.e., the demand that is expected to repeat in each period of the planning horizon. Motivated by the discrepancy between time series forecasts of demand in each period and the periodic demand, Laage et al. (2021) recently introduced the Periodic Demand Estimation (PDE) problem and showed that it has a high value. However, they made strong assumptions on the solution space so that the problem could be solved by enumeration. In this paper we significantly extend their work. We propose a new PDE formulation that relaxes the strong assumptions on the solution space. We solve large instances of this formulation with a two-step heuristic. The first step reduces the dimension of the feasible space by performing clustering of commodities based on instance-specific information about demand and supply interactions. The formulation along with the first step allow to solve the problem in a second step by either metaheuristics or the state-of-the-art black-box optimization solver NOMAD. In an extensive empirical study using real data from the Canadian National Railway Company, we show that our methodology produces high quality solutions and outperforms existing ones.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Other Computer Science,Mathematics - Optimization and Control,prethesis,read},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\S6NJV9JD\\Laage et al. - 2021 - A Two-step Heuristic for the Periodic Demand Estim.pdf;C\:\\Users\\Luca\\Zotero\\storage\\Y4PCJJYR\\2108.html}
+}
+
+@misc{larsenFastContinuousInteger2022,
+  title = {Fast {{Continuous}} and {{Integer L-shaped Heuristics Through Supervised Learning}}},
+  author = {Larsen, Eric and Frejinger, Emma and Gendron, Bernard and Lodi, Andrea},
+  year = {2022},
+  number = {arXiv:2205.00897},
+  eprint = {2205.00897},
+  primaryclass = {cs, math},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2205.00897},
+  urldate = {2023-04-03},
+  abstract = {We propose a methodology at the nexus of operations research and machine learning (ML) leveraging generic approximators available from ML to accelerate the solution of mixed-integer linear two-stage stochastic programs. We aim at solving problems where the second stage is highly demanding. Our core idea is to gain large reductions in online solution time while incurring small reductions in first-stage solution accuracy by substituting the exact second-stage solutions with fast, yet accurate supervised ML predictions. This upfront investment in ML would be justified when similar problems are solved repeatedly over time, for example, in transport planning related to fleet management, routing and container yard management. Our numerical results focus on the problem class seminally addressed with the integer and continuous L-shaped cuts. Our extensive empirical analysis is grounded in standardized families of problems derived from stochastic server location (SSLP) and stochastic multi knapsack (SMKP) problems available in the literature. The proposed method can solve the hardest instances of SSLP in less than 9\% of the time it takes the state-of-the-art exact method, and in the case of SMKP the same figure is 20\%. Average optimality gaps are in most cases less than 0.1\%.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control,prethesis},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\D5FV3Y97\\Larsen et al. - 2022 - Fast Continuous and Integer L-shaped Heuristics Th.pdf;C\:\\Users\\Luca\\Zotero\\storage\\RQ4L49F5\\2205.html}
+}
+
+@article{larsenPredictingTacticalSolutions2021,
+  title = {Predicting {{Tactical Solutions}} to {{Operational Planning Problems Under Imperfect Information}}},
+  author = {Larsen, Eric and Lachapelle, S{\'e}bastien and Bengio, Yoshua and Frejinger, Emma and {Lacoste-Julien}, Simon and Lodi, Andrea},
+  year = {2021},
+  journal = {INFORMS Journal on Computing},
+  publisher = {{INFORMS}},
+  doi = {10.1287/ijoc.2021.1091},
+  urldate = {2023-04-03},
+  abstract = {This paper offers a methodological contribution at the intersection of machine learning and operations research. Namely, we propose a methodology to quickly predict expected tactical descriptions o...},
+  copyright = {Copyright \textcopyright{} 2021, INFORMS},
+  langid = {english},
+  keywords = {prethesis},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\ZNN8LCYE\\Larsen et al. - 2021 - Predicting Tactical Solutions to Operational Plann.pdf;C\:\\Users\\Luca\\Zotero\\storage\\Q4I8V9MB\\ijoc.2021.html}
+}
+
+@misc{mandiDecisionFocusedLearningLens2022,
+  title = {Decision-{{Focused Learning}}: {{Through}} the {{Lens}} of {{Learning}} to {{Rank}}},
+  shorttitle = {Decision-{{Focused Learning}}},
+  author = {Mandi, Jayanta and Bucarey, V{\'i}ctor and Mulamba, Maxime and Guns, Tias},
+  year = {2022},
+  number = {arXiv:2112.03609},
+  eprint = {2112.03609},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  abstract = {In the last years decision-focused learning framework, also known as predict-and-optimize, have received increasing attention. In this setting, the predictions of a machine learning model are used as estimated cost coefficients in the objective function of a discrete combinatorial optimization problem for decision making. Decision-focused learning proposes to train the ML models, often neural network models, by directly optimizing the quality of decisions made by the optimization solvers. Based on a recent work that proposed a noise contrastive estimation loss over a subset of the solution space, we observe that decision-focused learning can more generally be seen as a learning-to-rank problem, where the goal is to learn an objective function that ranks the feasible points correctly. This observation is independent of the optimization method used and of the form of the objective function. We develop pointwise, pairwise and listwise ranking loss functions, which can be differentiated in closed form given a subset of solutions. We empirically investigate the quality of our generic methods compared to existing decision-focused learning approaches with competitive results. Furthermore, controlling the subset of solutions allows controlling the runtime considerably, with limited effect on regret.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,promising,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\YQHSZLEQ\\Mandi et al. - 2022 - Decision-Focused Learning Through the Lens of Lea.pdf;C\:\\Users\\Luca\\Zotero\\storage\\IK5SUCME\\2112.html}
+}
+
+@article{mandiInteriorPointSolving2020,
+  title={Interior point solving for lp-based prediction + optimisation},
+  author={Mandi, Jayanta and Guns, Tias},
+  journal={Advances in Neural Information Processing Systems},
+  volume={33},
+  pages={7272--7282},
+  year={2020}
+}
+
+@inproceedings{mandiSmartPredictandOptimizeHard2019,
+  title={Smart predict-and-optimize for hard combinatorial optimization problems},
+  author={Mandi, Jayanta and Stuckey, Peter J and Guns, Tias and others},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  volume={34},
+  pages={1603--1610},
+  year={2020}
+}
+
+@misc{MathematicalProgrammingConstraint,
+  title = {Mathematical Programming versus Constraint Programming \textemdash{} {{IBM}}\textregistered{} {{Decision Optimization CPLEX}}\textregistered{} {{Modeling}} for {{Python}} ({{DOcplex}}) {{V2}}.22 Documentation},
+  urldate = {2022-03-17},
+  howpublished = {https://ibmdecisionoptimization.github.io/docplex-doc/mp\_vs\_cp.html},
+  file = {C:\Users\Luca\Zotero\storage\2UGABEP8\mp_vs_cp.html}
+}
+
+@inproceedings{mayteCaseStudyApplying2022,
+  title = {Case {{Study}}: {{Applying Decision Focused Learning}} in the {{Real World}}},
+  shorttitle = {Case {{Study}}},
+  author = {Mayte, Aditya and Taneja, Aparna and Wang, Kai and Tambe, Milind Shashikant and Verma, Shresth},
+  year = {2022},
+  keywords = {unread},
+  file = {C:\Users\Luca\Zotero\storage\JZHR5AXK\Mayte et al. - 2022 - Case Study Applying Decision Focused Learning in .pdf}
+}
+
+@inproceedings{mulambaContrastiveLossesSolution2021,
+  title     = {Contrastive Losses and Solution Caching for Predict-and-Optimize},
+  author    = {Mulamba, Maxime and Mandi, Jayanta and Diligenti, Michelangelo and Lombardi, Michele and Bucarey, Victor and Guns, Tias},
+  booktitle = {Proceedings of the Thirtieth International Joint Conference on
+               Artificial Intelligence, {IJCAI-21}},
+  pages     = {2833--2840},
+  year      = {2021},
+}
+
+
+@misc{mulambaDiscreteSolutionPools2020,
+  title = {Discrete Solution Pools and Noise-Contrastive Estimation for Predict-and-Optimize},
+  author = {Mulamba, Maxime and Mandi, Jayanta and Diligenti, Michelangelo and Lombardi, Michele and Bucarey, V{\'i}ctor and Guns, Tias},
+  year = {2020},
+  abstract = {Numerous real-life decision-making processes involve solving a combinatorial optimization problem with uncertain input that can be estimated from historic data. There is a growing interest in decision-focused learning methods, where the loss function used for learning to predict the uncertain input uses the outcome of solving the combinatorial problem over a set of predictions. Different surrogate loss functions have been identified, often using a continuous approximation of the combinatorial problem. However, a key bottleneck is that to compute the loss, one has to solve the combinatorial optimisation problem for each training instance in each epoch, which is computationally expensive even in the case of continuous approximations. We propose a different solver-agnostic method for decision-focused learning, namely by considering a pool of feasible solutions as a discrete approximation of the full combinatorial problem. Solving is now trivial through a single pass over the solution pool. We design several variants of a noise-contrastive loss over the solution pool, which we substantiate theoretically and empirically. Furthermore, we show that by dynamically re-solving only a fraction of the training instances each epoch, our method performs on par with the state of the art, whilst drastically reducing the time spent solving, hence increasing the feasibility of predict-and-optimize for larger problems.},
+  keywords = {read,researchproposal},
+  file = {C:\Users\Luca\Zotero\storage\NBZX9WG3\Mulamba et al. - 2020 - Discrete solution pools and noise-contrastive esti.pdf}
+}
+
+@article{naderiMixedIntegerProgrammingConstraint,
+  title = {Mixed-{{Integer Programming Versus Constraint Programming}} for {{Shop Scheduling Problems}}: {{New Results}} and {{Outlook}}},
+  author = {Naderi, Bahman and Ruiz, Ruben and Roshanaei, Vahid},
+  pages = {43},
+  abstract = {Constraint Programming (CP) has been given a new lease of life after new CP-based procedures have been incorporated into state-of-the-art solvers, most notably the CP Optimizer from IBM. Classical CP solvers were only capable of guaranteeing the optimality of a solution, but they could not provide bounds for the integer feasible solutions found if interrupted prematurely due to, say, timelimits. New versions, however, provide bounds and optimality guarantees, effectively making CP a viable alternative to more traditional mixed-integer programming (MIP) models and solvers. We capitalize on these developments and conduct a computational evaluation of MIP and CP models on 12 select scheduling problems.1 We carefully chose these 12 problems to represent a wide variety of scheduling problems that occur in different service and manufacturing settings. We also consider basic and well-studied simplified problems. These scheduling settings range from pure sequencing (e.g., flow shop and open shop) or joint assignment-sequencing (e.g., distributed flow shop and hybrid flow shop) to pure assignment (i.e., parallel machine) scheduling problems. We present MIP and CP models for each variant of these problems and evaluate their performance over 17 relevant and standard benchmarks that we identified in the literature. The computational campaign encompasses almost 6,623 experiments and evaluates the MIP and CP models along five dimensions of problem characteristics, objective function, decision variables, input parameters, and quality of bounds. We establish the areas that each one of these models performs well and recognize their conceivable reasons. The obtained results indicate that CP sets new limits concerning the maximum problem size that can be solved using off-the-shelf exact techniques.},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\EXE5X9FE\Naderi et al. - Mixed-Integer Programming Versus Constraint Progra.pdf}
+}
+
+@article{nandwaniSolverFreeFrameworkScalable2023,
+  title={A Solver-Free Framework for Scalable Learning in Neural ILP Architectures},
+  author={Nandwani, Yatin and Ranjan, Rishabh and Singla, Parag and others},
+  journal={Advances in Neural Information Processing Systems},
+  volume={35},
+  pages={7972--7986},
+  year={2022}
+}
+
+@article{papeConstraintBasedScheduling,
+  title = {Constraint-{{Based Scheduling}}},
+  author = {Pape, Claude Le},
+  pages = {33},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\VKE8CH2X\Pape - Constraint-Based Scheduling.pdf}
+}
+
+@misc{papeConstraintBasedSchedulingTutorial2005,
+  title = {Constraint-{{Based Scheduling}} : {{A Tutorial}}},
+  shorttitle = {Constraint-{{Based Scheduling}}},
+  author = {Pape, C. L.},
+  year = {2005},
+  urldate = {2022-03-17},
+  abstract = {Given a set of resources with given capacities, a set of activities with given processing times and resource requirements, and a set of temporal constraints between activities, a ``pure'' scheduling problem consists of deciding when to execute each activity, so that both temporal constraints and resource constraints are satisfied. Most scheduling problems can easily be represented as instances of the constraint satisfaction problem (Kumar, 1992): given a set of variables, a set of possible values (domain) for each variable, and a set of constraints between the variables, assign a value to each variable, so that all the constraints are satisfied.},
+  howpublished = {https://www.semanticscholar.org/paper/Constraint-Based-Scheduling-\%3A-A-Tutorial-Pape/366a90f5842091a48d51920808b9c3af5c2a46b7},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\MHFBT32P\366a90f5842091a48d51920808b9c3af5c2a46b7.html}
+}
+
+@inproceedings{paulusCombOptNetFitRight2022,
+  title={{{CombOptNet}}: {{Fit}} the {{Right NP-Hard Problem}} by {{Learning Integer Programming Constraints}}},
+  author={Paulus, Anselm and Rol{\'\i}nek, Michal and Musil, V{\'\i}t and Amos, Brandon and Martius, Georg},
+  booktitle={International Conference on Machine Learning},
+  pages={8443--8453},
+  year={2021},
+  organization={PMLR}
+}
+
+@inproceedings{pogancicDifferentiationBlackboxCombinatorial2020,
+  title={Differentiation of {{Blackbox Combinatorial Solvers}}},
+  author={Pogan{\v{c}}i{\'c}, Marin Vlastelica and Paulus, Anselm and Musil, Vit and Martius, Georg and Rolinek, Michal},
+  booktitle={International Conference on Learning Representations},
+  year={2019}
+}
+
+@article{pougalaCapturingTradeoffsDaily2021,
+  title = {Capturing Trade-Offs between Daily Scheduling Choices},
+  author = {Pougala, Janody and Hillel, Tim and Bierlaire, Michel},
+  year = {2021},
+  pages = {27},
+  langid = {english},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\8MVBU63F\\Pougala et al. - Capturing trade-offs between daily scheduling choi.pdf;C\:\\Users\\Luca\\Zotero\\storage\\HPX44F57\\Pougala et al. - Capturing trade-offs between daily scheduling choi.pdf}
+}
+
+@article{refanidisConstraintbasedApproachScheduling2010,
+  title = {A Constraint-Based Approach to Scheduling an Individual's Activities},
+  author = {Refanidis, Ioannis and {Yorke-Smith}, Neil},
+  year = {2010},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  volume = {1},
+  number = {2},
+  pages = {1--32},
+  issn = {2157-6904, 2157-6912},
+  doi = {10.1145/1869397.1869401},
+  urldate = {2022-03-17},
+  abstract = {The goal of helping to automate the management of an individual's time is ambitious in terms both of knowledge engineering and of the quality of the plans produced by an AI system. Modeling an individual's activities is itself a challenge, due to the variety of activity, constraint, and preference types involved. Activities might be simple or interruptible; they might have fixed or variable durations, constraints over their temporal domains, and binary constraints between them. Activities might require the individual being at specific locations in order, whereas traveling time should be taken into account. Some activities might require exclusivity, whereas others can be overlapped with compatible concurrent activities. Finally, while scheduled activities generate utility for the individual, extra utility might result from the way activities are scheduled in time, individually and in conjunction.             This article presents a rigorous, expressive model to represent an individual's activities, that is, activities whose scheduling is not contingent on any other person. Joint activities such as meetings are outside our remit; it is expected that these are arranged manually or through negotiation mechanisms and they are considered as fixed busy times in the individual's calendar. The model, formulated as a constraint optimization problem, is general enough to accommodate a variety of situations. We present a scheduler that operates on this rich model, based on the general squeaky wheel optimization framework and enhanced with domain-dependent heuristics and forward checking. Our empirical evaluation demonstrates both the efficiency and the effectiveness of the selected approach. Part of the work described has been implemented in the SelfPlanner system, a Web-based intelligent calendar application that utilizes Google Calendar.},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\ZTHVIR7Z\Refanidis and Yorke-Smith - 2010 - A constraint-based approach to scheduling an indiv.pdf}
+}
+
+@article{rodriguezConstraintProgrammingModel2007,
+  title = {A Constraint Programming Model for Real-Time Train Scheduling at Junctions},
+  author = {Rodriguez, Joaqu{\'i}n},
+  year = {2007},
+  journal = {Transportation Research Part B: Methodological},
+  volume = {41},
+  number = {2},
+  pages = {231--245},
+  issn = {01912615},
+  doi = {10.1016/j.trb.2006.02.006},
+  urldate = {2022-03-17},
+  abstract = {In this paper, we present a constraint programming model for the routing and scheduling of trains running through a junction. The model uses input data from relevant time events of train runs calculated by a simulator. The model can be integrated into a decision support system used by operators who make decisions to change train routes or orders to avoid conflicts and delays. The model has been applied to a set of problem instances. This set has been defined from a real case study of traffic on the Pierrefitte-Gonesse node, North of Paris. Preliminary results show that the solution identified by the model yields a significant improvement in performance within an acceptable computation time.},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\LSJYTUZE\Rodriguez - 2007 - A constraint programming model for real-time train.pdf}
+}
+
+@article{sadanaSurveyContextualOptimization2023,
+  title={A {{Survey}} of {{Contextual Optimization Methods}} for {{Decision Making}} under {{Uncertainty}}},
+  author={Sadana, Utsav and Chenreddy, Abhilash and Delage, Erick and Forel, Alexandre and Frejinger, Emma and Vidal, Thibaut},
+  journal={arXiv preprint arXiv:2306.10374},
+  year={2023}
+}
+
+@inproceedings{shahDecisionFocusedLearningDecisionMaking2022,
+  title = {Decision-{{Focused Learning}} without {{Decision-Making}}: {{Learning Locally Optimized Decision Losses}}},
+  shorttitle = {Decision-{{Focused Learning}} without {{Decision-Making}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Shah, Sanket and Wang, Kai and Wilder, Bryan and Perrault, Andrew and Tambe, Milind},
+  year = {2022},
+  urldate = {2023-04-03},
+  abstract = {Decision-Focused Learning (DFL) is a paradigm for tailoring a predictive model to a downstream optimization task that uses its predictions in order to perform better \textbackslash textit\{on that specific task\}. The main technical challenge associated with DFL is that it requires being able to differentiate through the optimization problem, which is difficult due to discontinuous solutions and other challenges. Past work has largely gotten around this this issue by \textbackslash textit\{handcrafting\} task-specific surrogates to the original optimization problem that provide informative gradients when differentiated through. However, the need to handcraft surrogates for each new task limits the usability of DFL. In addition, there are often no guarantees about the convexity of the resulting surrogates and, as a result, training a predictive model using them can lead to inferior local optima. In this paper, we do away with surrogates altogether and instead \textbackslash textit\{learn\} loss functions that capture task-specific information. To the best of our knowledge, ours is the first approach that entirely replaces the optimization component of decision-focused learning with a loss that is automatically learned. Our approach (a) only requires access to a black-box oracle that can solve the optimization problem and is thus \textbackslash textit\{generalizable\}, and (b) can be \textbackslash textit\{convex by construction\} and so can be easily optimized over. We evaluate our approach on three resource allocation problems from the literature and find that our approach outperforms learning without taking into account task-structure in all three domains, and even hand-crafted surrogates from the literature.},
+  langid = {english},
+  keywords = {unread},
+  file = {C:\Users\Luca\Zotero\storage\I4MHUR3F\Shah et al. - 2022 - Decision-Focused Learning without Decision-Making.pdf}
+}
+
+@article{shahDecisionFocusedLearningDifferentiable,
+  title = {Decision-{{Focused Learning}} without {{Differentiable Optimization}}: {{Learning Locally Optimized Decision Losses}}},
+  author = {Shah, Sanket and Wang, Kai and Wilder, Bryan and Perrault, Andrew and Tambe, Milind},
+  abstract = {Decision-Focused Learning (DFL) is a paradigm for tailoring a predictive model to a downstream optimization task that uses its predictions in order to perform better on that specific task. The main technical challenge associated with DFL is that it requires being able to differentiate through the optimization problem, which is difficult due to discontinuous solutions and other challenges. Past work has largely gotten around this this issue by handcrafting task-specific surrogates to the original optimization problem that provide informative gradients when differentiated through. However, the need to handcraft surrogates for each new task limits the usability of DFL. In addition, there are often no guarantees about the convexity of the resulting surrogates and, as a result, training a predictive model using them can lead to inferior local optima. In this paper, we do away with surrogates altogether and instead learn loss functions that capture task-specific information. To the best of our knowledge, ours is the first approach that entirely replaces the optimization component of decision-focused learning with a loss that is automatically learned. Our approach (a) only requires access to a black-box oracle that can solve the optimization problem and is thus generalizable, and (b) can be convex by construction and so can be easily optimized over. We evaluate our approach on three resource allocation problems from the literature and find that our approach outperforms learning without taking into account task-structure in all three domains, and even hand-crafted surrogates from the literature.},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\9JUGIJCK\Shah et al. - Decision-Focused Learning without Differentiable O.pdf}
+}
+
+@InProceedings{sunMaximumOptimalityMargin2023,
+  title = 	 {Maximum Optimality Margin: A Unified Approach for Contextual Linear Programming and Inverse Linear Programming},
+  author =       {Sun, Chunlin and Liu, Shang and Li, Xiaocheng},
+  booktitle = 	 {Proceedings of the 40th International Conference on Machine Learning},
+  pages = 	 {32886--32912},
+  year = 	 {2023},
+  volume = 	 {202},
+  publisher =    {PMLR},
+}
+
+
+@misc{tanDeepInverseOptimization2018,
+  title = {Deep {{Inverse Optimization}}},
+  author = {Tan, Yingcong and Delong, Andrew and Terekhov, Daria},
+  year = {2018},
+  number = {arXiv:1812.00804},
+  eprint = {1812.00804},
+  primaryclass = {cs, math, stat},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1812.00804},
+  urldate = {2023-05-03},
+  abstract = {Given a set of observations generated by an optimization process, the goal of inverse optimization is to determine likely parameters of that process. We cast inverse optimization as a form of deep learning. Our method, called deep inverse optimization, is to unroll an iterative optimization process and then use backpropagation to learn parameters that generate the observations. We demonstrate that by backpropagating through the interior point algorithm we can learn the coefficients determining the cost vector and the constraints, independently or jointly, for both non-parametric and parametric linear programs, starting from one or multiple observations. With this approach, inverse optimization can leverage concepts and algorithms from deep learning.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning,invopt,Mathematics - Optimization and Control,Statistics - Machine Learning,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\VPCRJMFP\\Tan et al. - 2018 - Deep Inverse Optimization.pdf;C\:\\Users\\Luca\\Zotero\\storage\\FL4Q6KRV\\1812.html}
+}
+
+@inproceedings{tanLearningLinearPrograms2020,
+  title = {Learning {{Linear Programs}} from {{Optimal Decisions}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Tan, Yingcong and Terekhov, Daria and Delong, Andrew},
+  year = {2020},
+  volume = {33},
+  pages = {19738--19749},
+  publisher = {{Curran Associates, Inc.}},
+  urldate = {2023-04-12},
+  abstract = {We propose a flexible gradient-based framework for learning linear programs from optimal decisions. Linear programs are often specified by hand, using prior knowledge of relevant costs and constraints. In some applications, linear programs must instead be learned from observations of optimal decisions. Learning from optimal decisions is a particularly challenging bilevel problem, and much of the related inverse optimization literature is dedicated to special cases. We tackle the general problem, learning all parameters jointly while allowing flexible parameterizations of costs, constraints, and loss functions. We also address challenges specific to learning linear programs, such as empty feasible regions and non-unique optimal decisions. Experiments show that our method successfully learns synthetic linear programs and minimum-cost multi-commodity flow instances for which previous methods are not directly applicable. We also provide a fast batch-mode PyTorch implementation of the homogeneous interior point algorithm, which supports gradients by implicit differentiation or backpropagation.},
+  keywords = {promising,unread},
+  file = {C:\Users\Luca\Zotero\storage\MG7JSTZQ\Tan et al. - 2020 - Learning Linear Programs from Optimal Decisions.pdf}
+}
+
+@misc{tesoMachineLearningCombinatorial2022,
+  title = {Machine {{Learning}} for {{Combinatorial Optimisation}} of {{Partially-Specified Problems}}: {{Regret Minimisation}} as a {{Unifying Lens}}},
+  shorttitle = {Machine {{Learning}} for {{Combinatorial Optimisation}} of {{Partially-Specified Problems}}},
+  author = {Teso, Stefano and Bliek, Laurens and Borghesi, Andrea and Lombardi, Michele and {Yorke-Smith}, Neil and Guns, Tias and Passerini, Andrea},
+  year = {2022},
+  number = {arXiv:2205.10157},
+  eprint = {2205.10157},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2205.10157},
+  urldate = {2023-04-06},
+  abstract = {It is increasingly common to solve combinatorial optimisation problems that are partially-specified. We survey the case where the objective function or the relations between variables are not known or are only partially specified. The challenge is to learn them from available data, while taking into account a set of hard constraints that a solution must satisfy, and that solving the optimisation problem (esp. during learning) is computationally very demanding. This paper overviews four seemingly unrelated approaches, that can each be viewed as learning the objective function of a hard combinatorial optimisation problem: 1) surrogate-based optimisation, 2) empirical model learning, 3) decision-focused learning (`predict + optimise'), and 4) structured-output prediction. We formalise each learning paradigm, at first in the ways commonly found in the literature, and then bring the formalisations together in a compatible way using regret. We discuss the differences and interactions between these frameworks, highlight the opportunities for cross-fertilization and survey open directions.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning,promising,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\H6VLBL5V\\Teso et al. - 2022 - Machine Learning for Combinatorial Optimisation of.pdf;C\:\\Users\\Luca\\Zotero\\storage\\YJQA6M22\\2205.html}
+}
+
+@misc{TravelForecastingResource,
+  title = {Travel {{Forecasting Resource}}},
+  journal = {Travel Forecasting, Explained},
+  urldate = {2022-03-17},
+  abstract = {Travel forecasting, explained. A collection of best practices and practical know-how for learning about, creating, and using travel forecasting models.},
+  howpublished = {https://tfresource.org},
+  langid = {american},
+  file = {C:\Users\Luca\Zotero\storage\F6WMYRXD\Limitations_in_classic_constraint_based_approaches.html}
+}
+
+@article{unsalConstraintProgrammingApproach2013,
+  title = {Constraint Programming Approach to Quay Crane Scheduling Problem},
+  author = {Unsal, Ozgur and Oguz, Ceyda},
+  year = {2013},
+  journal = {Transportation Research Part E: Logistics and Transportation Review},
+  volume = {59},
+  pages = {108--122},
+  issn = {13665545},
+  doi = {10.1016/j.tre.2013.08.006},
+  urldate = {2022-03-17},
+  abstract = {This study presents a constraint programming (CP) model for the quay crane scheduling problem (QCSP), which occurs at container terminals, with realistic constraints such as safety margins, travel times and precedence relations. Next, QCSP with time windows and integrated crane assignment and scheduling problem, are discussed. The performance of the CP model is compared with that of algorithms presented in QCSP literature. The results of the computational experiments indicate that the CP model is able to produce good results while reducing the computational time, and is a robust and flexible alternative for different types of crane scheduling problems.},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\7SKK6U5N\Unsal and Oguz - 2013 - Constraint programming approach to quay crane sche.pdf}
+}
+
+@article{weilConstraintProgrammingNurse1995,
+  title = {Constraint Programming for Nurse Scheduling},
+  author = {Weil, G. and Heus, K. and Francois, P. and Poujade, M.},
+  year = {July-Aug./1995},
+  journal = {IEEE Engineering in Medicine and Biology Magazine},
+  volume = {14},
+  number = {4},
+  pages = {417--422},
+  issn = {07395175},
+  doi = {10.1109/51.395324},
+  urldate = {2022-03-17},
+  langid = {english},
+  file = {C:\Users\Luca\Zotero\storage\KPJD345T\Weil et al. - 1995 - Constraint programming for nurse scheduling.pdf}
+}
+
+@inproceedings{wilderMeldingDataDecisionsPipeline2018,
+  title={Melding the data-decisions pipeline: Decision-focused learning for combinatorial optimization},
+  author={Wilder, Bryan and Dilkina, Bistra and Tambe, Milind},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={33},
+  pages={1658--1665},
+  year={2019}
+}
+
+
+@misc{yanSurrogateObjectiveFramework2021,
+  title = {A {{Surrogate Objective Framework}} for {{Prediction}}+{{Optimization}} with {{Soft Constraints}}},
+  author = {Yan, Kai and Yan, Jie and Luo, Chuan and Chen, Liting and Lin, Qingwei and Zhang, Dongmei},
+  year = {2021},
+  number = {arXiv:2111.11358},
+  eprint = {2111.11358},
+  primaryclass = {cs, math},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2111.11358},
+  urldate = {2023-04-06},
+  abstract = {Prediction+optimization is a common real-world paradigm where we have to predict problem parameters before solving the optimization problem. However, the criteria by which the prediction model is trained are often inconsistent with the goal of the downstream optimization problem. Recently, decision-focused prediction approaches, such as SPO+ and direct optimization, have been proposed to fill this gap. However, they cannot directly handle the soft constraints with the \$max\$ operator required in many real-world objectives. This paper proposes a novel analytically differentiable surrogate objective framework for real-world linear and semi-definite negative quadratic programming problems with soft linear and non-negative hard constraints. This framework gives the theoretical bounds on constraints' multipliers, and derives the closed-form solution with respect to predictive parameters and thus gradients for any variable in the problem. We evaluate our method in three applications extended with soft constraints: synthetic linear programming, portfolio optimization, and resource provisioning, demonstrating that our method outperforms traditional two-staged methods and other decision-focused approaches.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Mathematics - Optimization and Control,promising,unread},
+  file = {C\:\\Users\\Luca\\Zotero\\storage\\Q4RN8R8K\\Yan et al. - 2021 - A Surrogate Objective Framework for Prediction+Opt.pdf;C\:\\Users\\Luca\\Zotero\\storage\\FNT27ZNE\\2111.html}
+}

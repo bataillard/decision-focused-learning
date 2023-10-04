@@ -1,0 +1,30 @@
+\begin{abstract}
+
+Solving operations research problems in transportation presents many challenges. Network Design (ND) models are complex combinatorial optimization problems used to plan transportation networks. The parameters of ND problems, such as commodity demand, are subject to uncertainty and must be estimated from noisy historical data. This is typically done separately from the optimization by machine learning or time-series models. These prediction models are trained using a prediction accuracy loss function. A recent approach to handling uncertainty in optimization problems is Decision-Focused Learning (DFL). It incorporates the optimization problem into the learning algorithm, ensuring that the predictions are aligned with the goal of making good decisions.
+
+This master's thesis is an exploratory study of DFL for ND problems where the commodity demands are uncertain. Most research focuses on DFL for problems with continuous variables and uncertain objective costs. However, ND problems are combinatorial and the uncertain demand parameters are in the constraints. Our aim is to integrate the prediction of demands and the optimization of an ND problem so that the prediction results in high quality downstream decisions. Our objective is to conduct a review of the literature on ND, DFL, and Inverse Optimization (IO), identify existing approaches, and test their suitability for this problem.
+
+In this study, we conduct a literature review of the fields of ND, DFL, and IO, and find that existing methods cannot be directly applied to the problem of DFL for ND. We formulate our problem as a stochastic optimization problem, and show how to evaluate the performance of a prediction model on the downstream cost of the ND problem. We show how the regret-based loss, the standard way of evaluating the downstream optimization cost, is mathematically ill-defined when the uncertainty is in the constraints. We formulate \textit{IO-constraint}, an IO model that that trains a linear prediction to predict demands but corresponds to Ordinary Linear Regression. Finally, we reframe DFL as a problem of appropriately weighting the training examples in the loss function, and sketch ideas for finding effective weights using an iterative weight update algorithm.
+% The  tool enables lateral decomposition of a multi-dimensional
+% flux compensator along the timing and space axes.
+
+% The abstract serves as an executive summary of your project.
+% Your abstract should cover at least the following topics, 1-2 sentences for
+% each: what area you are in, the problem you focus on, why existing work is
+% insufficient, what the high-level intuition of your work is, maybe a neat
+% design or implementation decision, and key results of your evaluation.
+
+\end{abstract}
+
+\begin{frenchabstract}
+% TODO
+
+La résolution de problèmes de recherche opérationelle en transports présente de nombreux défis. Les modèles de \og Network Design \fg (ND) sont des problèmes d'optimization combinatoire complexes, qui sont utilisés pour planifier des réseaux de transport. Les paramètres d'un modèle de ND, tels que la demande en marchandises, sont incertains et doivent être estimés à partir de données historiques avec du bruit. Cette estimation est généralement réalisée séparément de l'optimisation par des modèles d'apprentissage automatique ou de séries temporelles. Ces modèles de prédiction sont souvent entrainés avec une fonction de perte basée sur l'exactitude des prédictions. Le \og Decision-Focused Learning \fg (DFL) est une approche récente pour gérer l'incertitude dans les problèmes d'optimization. Elle intègre le problème d'optmization dans l'algorithme d'apprentissage, garantissant que les prédictions sont alignées sur l'objectif de prendre de bonnes décisions.
+
+Cette thèse de Master est une étude exploratoire du DFL pour les problèmes de ND où la demande en marchandise est incertaine. La majorité des études actuelles se concentrent sur le DFL pour des problèmes à variables continues et avec des coûts incertains. En revanche, les problèmes de ND sont de nature combinatoire et la demande en marchandise incertaine se situe dans les containtes. Nous visons à intégrer la prédiction de la demande et l'optimization d'un problème de ND de sorte que les prédictions aboutissent à des décisions en aval de haute qualité. Notre objectif est d'effectuer une revue de la litérature sur le ND, le DFL et l'optimization inverse (IO), d'identifier les approches existantes et de tester leur utilité pour ce problème.
+
+Dans cette étude, nous effectuons une revue de la littérature dans les domaines du ND, du DFL et de l'IO, et nous constatons que les méthodes existantes ne peuvent pas être directement appliquées au problème du DFL pour le ND. Nous formulons notre problème comme un problème d'optimisation stochastique et montrons comment évaluer la performance d'un modèle de prédiction sur le coût en aval du problème de ND. Nous montrons comment les pertes basées sur le regret, la méthode standard d'évaluation du coût d'optimisation en aval, est mathématiquement mal définie lorsque l'incertitude se trouve dans les contraintes. Nous formulons \textit{IO-constraint}, un modèle IO qui entraîne un modèle de prédiction linéaire pour prédire la demande, mais qui correspond à la régression linéaire ordinaire. Enfin, nous reformulons le DFL comme un problème de pondération appropriée des exemples d'entraînement dans la fonction de perte, et nous esquissons des idées pour trouver des pondérations efficaces à l'aide d'un algorithme itératif de mise à jour des pondérations.
+
+% For a doctoral thesis, you have to provide a French translation of the
+% English abstract. For other projects this is optional.
+\end{frenchabstract}

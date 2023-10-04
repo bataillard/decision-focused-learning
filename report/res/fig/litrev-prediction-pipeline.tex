@@ -1,0 +1,15 @@
+\begin{tikzpicture}[
+        square/.style = {draw, rectangle}, 
+        node distance = 4cm]
+        \node (start) {};
+        \node (start2) [above=1cm of start] {};
+        \node[square] (pred) [right=2cm of start] {\shortstack{Prediction\\model}};
+        \node[square] (opt) [right=3cm of pred] {\shortstack{Optimization\\model}};
+        \node[square] (loss) [right of=opt] {\shortstack{Task\\loss}};
+
+        \draw[thick, ->] (start) to node[midway, above] {Context} node[midway, below] {$\phib_l$} (pred);
+        \draw[thick, ->] (start2) -| (loss) node[pos=0.07, above] {Actual demands} node[pos=0.07, below] {$\db_l$};
+        \draw[thick, ->] (pred) to node[midway, above] {Prediction} node[midway, below] {$\dhat_l = f_\theta(\phib_l)$} (opt);
+        \draw[thick, ->] (opt) to node[midway, above] {Decision} node[midway, below] {$z^*(f_\theta(\phib_l))$} (loss);
+        \draw[dashed, thick, ->] (loss) -- +(0, -1.5) -| (pred) node[pos=0.3, below] {$\nabla_\theta \mathcal{L}_{\text{regret}}(z^*(f_\theta(\phib_l))), \db_l)$};
+\end{tikzpicture}

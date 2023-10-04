@@ -1,0 +1,156 @@
+\appendix
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Appendix}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Formulation of \textit{IO-constraint}} \label{sec:appendix:io-constraint-formulation}
+
+The constraints of the forward problem in \cite{ghobadiInferringLinearFeasible2021} are expressed as inequalities of the form $\bm{Ax} \leq \bm{b}$, where $\bm{x}$ is a vector of decision variables and $A$ and $b$ are a matrix and a vector of constraint parameters respectively. We define our solution vector $\bm{x}$ given a forward solution $(\phib_l, x^*(\db_l), y^*(\db_l))$ as a concatenation of the three vectors of the forward solution:
+\begin{equation}
+    \bm{x}_l = \begin{bmatrix}
+    x^*(\db_l) & y^*(\db_l) & \phib_l  
+\end{bmatrix}^\top \in \mathbb{R}^{D_x}.
+\end{equation}
+where the dimension of the vector $D_x = |\mathcal{K}||\mathcal{A}| + |\mathcal{A}| + m$ equals the sum of the dimension of the three sub-vectors.
+
+The forward problem constraints are split into two groups, known constraints $\bm{Gx} \leq h$ and unknown constraints $\bm{Ax} \leq \bm{b}$. We can rewrite the constraints as inequalities to form matrices $\bm{A}$ and $\bm{G}$, and vectors $\bm{b}$ and $\bm{h}$, as defined in \cite{ghobadiInferringLinearFeasible2021}. Because our constraints are partially known, we define a set of valid matrices $\bm{\mathcal{A}}_{\text{valid}}$ such that $\bm{A} \in  \bm{\mathcal{A}}_{\text{valid}}$ in the inverse model.
+
+We convert the unknown constraints to matrix inequality form. The set of unknown constraints is only comprised of the flow conservation constraints. There are two equality constraints for every commodity $k$, one for the flow on the destination node $n = \mathrm{dest}(k)$ and a second for the origin node $n = \mathrm{orig}(k)$. An equality constraint can be rewritten as two inequality constraints. For every commodity $k$, the flow conservation constraints can be written as four vectors $\bm{a}^k_\text{orig}, -\bm{a}^k_\text{orig}, \bm{a}^k_\text{dest}, -\bm{a}^k_\text{dest}$ that form rows of the $\bm{A}$ matrix. 
+
+We can construct the $\bm{a}^k_n$ vector for $n = \text{orig}(k), \text{dest}(k)$ in three parts. 
+The first part $\text{adj}(k, n) \in \mathbb{R}^{|\mathcal{K}||\mathcal{A}|}$ is a vector describing the adjacency of flows on node $n$ for commodity $k$. 
+The component of $\text{adj}(k, n)$ at index $(i,j,\bar{k})$ is:
+\begin{equation}
+    [\text{adj}(n, k)]^{\bar{k}}_{ij} = \begin{cases}
+        1, & \bar{k}=k \text{ and } j=n\\
+        -1, & \bar{k}=k \text{ and } i=n\\
+        0,  & \text{otherwise}.
+    \end{cases}
+\end{equation}
+The second part is a vector of zeros $\bm{0} \in \mathbb{R}^{|\mathcal{A}|}$ and the third part is the weights of the prediction model for commodity $k$: $\theta^k \in \mathbb{R}^m$. We can thus write the $\bm{a}^k_n$ vector as:
+\begin{equation}
+    \bm{a}^k_n = \begin{bmatrix}
+        \text{adj}(n, k) & \bm{0} & \theta^k  
+    \end{bmatrix} \in \mathbb{R}^{D_x}.
+\end{equation}
+Finally, the set of valid matrices and the $\bm{b}$ can be written:
+\begin{equation}\begin{split}
+    \bm{\mathcal{A}}_{\text{valid}} = \biggl\{
+    \begin{bmatrix}
+        \bm{a}^1_{\text{orig}} & -\bm{a}^1_{\text{orig}} &
+        \bm{a}^1_{\text{dest}} & -\bm{a}^1_{\text{dest}} &
+        & \cdots & 
+        \bm{a}^{|\mathcal{K}|}_{\text{orig}} & -\bm{a}^{|\mathcal{K}|}_{\text{orig}} &
+        \bm{a}^{|\mathcal{K}|}_{\text{dest}} & -\bm{a}^{|\mathcal{K}|}_{\text{dest}} 
+    \end{bmatrix}^\top \, \\:\,
+    \bm{\theta}^1, \ldots, \bm{\theta}^{|\mathcal{K}|} \in \mathbb{R}^m\biggr\}.
+\end{split}\end{equation}
+\begin{equation}
+    \bm{b} = \bm{0} \in \mathbb{R}^{4|\mathcal{K}|}.
+\end{equation}
+The known equations can be converted into matrix and vector inequalities $\bm{Gx} \leq \bm{h}$ using the same process. 
+
+\begin{exmp}
+    We illustrate this process on the network design problem from example \ref{exmp:methodology:opti-def}:
+    \begin{equation*}
+        \bm{\mathcal{A}}_{\text{valid}} = \left\{
+        \begin{bmatrix}
+            1 & 1 & 0 & 0 & -\theta^1_1 & \ldots & -\theta^1_m \\
+            -1 & -1 & 0 & 0 & \theta^1_1  & \ldots &  \theta^1_m \\
+        \end{bmatrix}\,:\,%
+        \theta^1_1, \ldots, \theta^1_m \in \mathbb{R}
+        \right\}
+    \end{equation*},
+    \begin{equation*}
+        \bm{b} = \bm{0} \in \mathbb{R}^4
+    \end{equation*}
+    \begin{multicols}{2}
+    \noindent
+    \begin{equation*}
+    \bm{G} = \begin{bmatrix}
+        1 & 0 & -u_p & 0 & 0 & \ldots & 0 \\
+        0 & 1 & 0 & -u_q & 0 & \ldots & 0 \\
+        -1 & 0 & 0 & 0 & 0 & \ldots & 0 \\
+        0 & -1 & 0 & 0 & 0 & \ldots & 0 \\
+        0 & 0 & -1 & 0 & 0 & \ldots & 0 \\
+        0 & 0 & 0 & -1 & 0 & \ldots & 0 \\
+        0 & 0 & 1 & 0 & 0 & \ldots & 0 \\
+        0 & 0 & 0 & 1 & 0 & \ldots & 0
+    \end{bmatrix} \in \mathbb{R}^{8 \times (4 + m)},
+    \end{equation*}
+    \columnbreak
+    \begin{equation*}
+        \bm{h} = \begin{bmatrix}
+        0 \\0 \\ 0\\ 0\\ 0\\ 0\\ 1\\ 1
+    \end{bmatrix}.
+    \end{equation*}
+    \end{multicols}
+\end{exmp}\newpage
+
+We can now write the single point inverse optimization problem. We assume we are given an optimal solution $\bm{x}_l$ as well as a vector of forward problem objective coefficients:
+\begin{equation}
+    \bm{c} = \begin{bmatrix}
+    \bm{c}_{ij}^k & \bm{f}_{ij} & 0 & \ldots & 0
+\end{bmatrix}^\top \in \mathbb{R}^{D_x}.
+\end{equation}
+where $\bm{c}_{ij}^k$ is the vector of flow costs and $ \bm{f}_{ij} $ is the vector of design costs. The optimization problem is formulated as follows:
+
+\begin{minie}[2]
+    {\bm{A}, \bm{b}, \bm{\pi}, \bm{\rho}}
+    {\mathcal{F}(\bm{A}, \bm{b}, \mathcal{D})}
+    {}
+    {}
+  \addConstraint{\bm{A} \bm{x}_l}{\geq \bm{b}}{}
+  \addConstraint{\bm{c}^\top \bm{x}_l}{= \bm{b}^\top \bm{\pi} + \bm{h}^\top \bm{\rho}}{}
+  \addConstraint{\bm{A}^\top \bm{\pi} + \bm{G}^\top \bm{\rho}}{= \bm{c}}{}
+  \addConstraint{\lVert \bm{a}_i\rVert}{= 1, \quad}{i = 1, \ldots, 4}
+  \addConstraint{\bm{\pi}}{\in \mathbb{R}^4}{}
+  \addConstraint{\bm{\rho}}{\in \mathbb{R}^3}{}
+  \addConstraint{\bm{A}}{\in \mathcal{A}_{\text{valid}}}{}
+  \addConstraint{\bm{b}}{= \bm{0}.}{}
+\end{minie}
+
+From this, we can formulate the multiple point inverse optimization problem. This problem is bi-linear, and \cite{ghobadiInferringLinearFeasible2021} propose a subsequent tractable version. We suppose we have a set of $L$ feasible solutions $\{\bm{x}_l\}^L_{l=1}$. We define the preferred solution 
+$$\bm{x}^* \in \arg \min_{\bm{x}_l : l = 1, \ldots, L} \bm{c}^\top \bm{x}_l$$. This allows us to express the multiple-point inverse optimization problem (MIO-EF). 
+
+\begin{minie}[2]
+    {\bm{A}, \bm{b}, \bm{\pi}, \bm{\rho}}
+    {\mathcal{F}(\bm{A}, \bm{b}, \mathcal{D})}
+    {MIO}
+    {}
+  \addConstraint{\bm{A} \bm{x}_l}{\geq \bm{b}, \quad}{\forall \, l = 1\ldots L}
+  \addConstraint{\bm{c}^\top \bm{x}^*}{= \bm{b}^\top \bm{\pi} + \bm{h}^\top \bm{\rho} \label{eq:annex:bilinear-mio-ef}}{}
+  \addConstraint{\bm{A}^\top \bm{\pi} + \bm{G}^\top \bm{\rho}}{= \bm{c}}{}
+  \addConstraint{\lVert \bm{a}_i\rVert}{= 1, \quad}{\forall\, i = 1, \ldots, 4|\mathcal{K}|}
+  \addConstraint{\bm{\pi}}{\in \mathbb{R}^4}{}
+  \addConstraint{\bm{\rho}}{\in \mathbb{R}^3}{}
+  \addConstraint{\bm{A}}{\in \mathcal{A}_{\text{valid}}}{}
+  \addConstraint{\bm{b}}{= \bm{0}.}{}
+\end{minie}
+
+We notice that Constraints (\ref{eq:annex:bilinear-mio-ef}) have bilinear terms and thus MIO is not computationally tractable. To remedy this, \cite{ghobadiInferringLinearFeasible2021} propose reformulating MIO as a tractable linear program. For this reformulation to be valid, the authors assume that the preferred solution $\bm{x}^*$ is optimal in the forward problem. In other words, they assume that the set of known constraints of the forward problem is:
+$$\mathcal{S} = \{\bm{x} \in \mathbb{R}^m \:|\: \bm{c}^\top \bm{x} \geq \bm{c}^\top \bar{x}^*, \bm{Gx}\geq \bm{h}\}.$$
+
+Using this assumption, we can finally express a tractable formulation of our inverse problem. This model assumes that the input points are generated from a linear model without noise:
+
+\begin{minie}
+    {\bm{A}, \bm{b}}
+    {\mathcal{F}(\bm{A}, \bm{b}, \mathcal{D})}
+    {eMIO}
+    {}
+  \addConstraint{\bm{a}^\top_i \bm{x}_l}{\geq \bm{b}, \quad}{\forall \, l = 1,\ldots, L,\, k = 1 \ldots 4}
+  \addConstraint{\lVert \bm{a}_i\rVert}{= 1, \quad}{\forall\, i = 1, \ldots, 4|\mathcal{K}|}
+  \addConstraint{\bm{A}}{\in \mathcal{A}_{\text{valid}}}{}
+  \addConstraint{\bm{b}}{= \bm{0}.}{}
+\end{minie}
+
+We obtain problem \ref{eq:methodology:io-constraint} by reformulating eMIO into regular constraint notation and adding the adjacency measure as a loss function $\mathcal{F}(\bm{A}, \bm{b}, \mathcal{D})$.
+
+% In case you ever need an (optional) appendix.
+%
+% You need the following items:
+% \begin{itemize}
+% \item A box
+% \item Crayons
+% \item A self-aware 5-year old
+% \end{itemize}

@@ -1,0 +1,20 @@
+\begin{tikzpicture}[main/.style={draw, rectangle, thick, minimum height=4cm, minimum width=3cm}]
+\node[main] (pred) {\shortstack{\Large Predict\\\\
+    \color{gray} \small e.g.\\
+    \color{gray} \small Machine learning\\
+    \color{gray} \small Time series
+}};
+\node[main] (opt) [right=of pred] {\shortstack{\Large            Optimize\\\\
+    \color{gray} \small e.g.\\
+    \color{gray} \small Operations\\
+    \color{gray} \small research\\
+    \color{gray}\small MILP
+}};
+\node (decision) [right=of opt] {};
+\node (data) [left=of pred] {};
+
+\draw[->,  thick] (pred.east) +(0, 0.1) to [out=45,in=135,looseness=1.3] (opt.west); 
+\draw[->, thick] (opt.west) +(0, -0.1) to [out=-135,in=-45,looseness=1.3] (pred.east);    
+\draw[->, thick] (data) -- node[near start, above] {Data} (pred); 
+\draw[->, thick] (opt) -- node[near start, above, pos=0.9] {Decisions} (decision); 
+\end{tikzpicture}

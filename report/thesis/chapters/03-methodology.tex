@@ -1,0 +1,379 @@
+%%%%%%%%%%%%%%%%
+\chapter{Methodology} \label{sec:methodology}
+%%%%%%%%%%%%%%%%
+
+This chapter presents the methodology we use to investigate DFL applied to ND problems with uncertain commodity demands. Since this is an exploratory study, we first describe the research process we followed, and we explain how we arrived at the methodology that we present in this chapter. We wanted to apply existing DFL methods to an ND problem. After reviewing the literature on ND, DFL, and IO literature, we found that few existing methods handle combinatorial problems with uncertainty in the constraints, but we were confident that we could combine and adapt techniques from IO and DFL to build a prediction model that minimizes regret. At the time, the paper by \cite{sunMaximumOptimalityMargin2023} had not been published yet, so we set out to build an IO model that trains a linear prediction model. After reviewing the results of our IO model, we noticed that the predictions were almost identical to our baseline linear regression. Digging deeper, we discovered that the definition of regret used in the DFL literature does not apply to problems with uncertain constraints. 
+Uncertainty in the constraints changes the feasible region of the problem, making it difficult to compare solutions with different demands. This meant that we could not use or adapt existing techniques, and finding a completely new DFL approach was beyond the scope of this thesis. However, we did explore ideas for improving the performance of a prediction model by viewing DFL as a weighting of the training examples in the loss function. 
+
+We now delve into the heart of our topic and outline the structure of this chapter. In Section~\ref{sec:methodology:opti-problem}, we formulate the ND problem as a stochastic optimization problem. We also introduce Prediction-Optimization pipelines that predict solutions to the ND problem from contextual information. In Section~\ref{sec:methodology:pipeline-eval}, we investigate how to evaluate the performance of a Prediction-Optimization pipeline for ND problems when the demand is uncertain. We then highlight the problem with the definition of regret in Section~\ref{sec:methodology:regret-issues}. In Section~\ref{sec:methodology:training-the-models}, we formulate \textit{IO-Constraint}, an IO model that recovers the weights of a linear prediction model.
+Finally, in Section~\ref{sec:methodology:weightings}, we explore reweighting the training examples in the loss function to improve prediction performance.
+
+% ==============================================================
+% ==============================================================
+% ==============================================================
+
+\section{Network Design Formulation} \label{sec:methodology:opti-problem}
+
+We formulate our problem as a stochastic Multi-Commodity Fixed-charge ND problem with two stages. We use the arc-based MCFND formulation from \cite{crainicNetworkDesignApplications2021}, to which we add stochastic demands using the task-based loss formulation from \cite{dontiTaskbasedEndtoendModel2017}. The MCFND problem is defined on a graph $\mathcal{G} = (\mathcal{N}, \mathcal{A})$ with commodities $k \in \mathcal{K}$ and associated origin and destination nodes $(\text{orig}(k), \text{dest}(k))$. Arc capacities ${u_{ij}}$, design costs ${f_{ij}}$, and flow costs ${c_{ij}^k}$ are fixed and known in advance. Demand for each commodity is uncertain, and we assume that the associated contextual information occurs jointly with the commodity demands following an unknown distribution. We let $\db = [d^1 \,\cdots\, d^{|\mathcal{K}|}]^\top \in \mathbb{R}^{|\mathcal{K}|}$ be a realization of the vector of commodity demands, and $\phib \in \mathbb{R}^m$ be a realization of the contextual information. We can split the commodity demands $\db$ into a vector of demands for each commodity $k \in \mathcal{K}$ and node $i \in \mathcal{N}$ pair as follows:
+\begin{equation} \label{eq:methodology:demand-by-node}
+    d^k_i = \begin{cases}
+        d^k & i = \text{orig}(k)\\
+        -d^k & i = \text{dest}(k) \\
+        0 & \text{otherwise}
+    \end{cases}
+\end{equation}
+    
+Our problem is split into a first and a second stage. The first stage (S-MCFND-First) designs the network: it defines a vector of design variables $\bm{y} \in \{0, 1\}^{|\mathcal{A}|}$ that minimizes the design costs and the expected multicommodity flow costs $\mathbb{E}_{\db | \phib}[Q(\bm{y}, \db) | \phib]$, conditional on the observation of contextual information $\phib$. It yields $y^*(\phib)$, the optimal network given the contextual information. The second stage (S-MCFND-Second) assumes that the network $\bm{y}$ is already designed, and that the realization of demand $\db$ is fixed. Given the network $y$ and the values of demand vector $\db$, the lower stage minimizes the total multicommodity flow cost, denoted $Q(\bm{y}, \db)$. 
+
+\begin{argminie}
+    {y_{ij}}
+    {\sumArcs f_{ij}y_{ij} + \mathbb{E}_{\db | \phib}[Q(\bm{y}, \db) | \phib]
+     \label{eq:methodology:upper-stoch-mcfnd-objective}}
+    {(S-MCFND-First) \label{eq:methodology:upper-stoch-mcfnd}}
+    {\bm{y}^*(\phib) = }
+  \addConstraint{y_{ij}}{\in \left\{0,1\right\}, \quad}{\forall \, \arcs}
+\end{argminie}
+
+\begin{minie}
+    {}
+    {\sumCommodities \sumArcs c_{ij}^k \cdot \xijk
+     \label{eq:methodology:lower-stoch-mcfnd-objective}}
+    {(S-MCFND-Second) \label{eq:methodology:lower-stoch-mcfnd}}
+    {Q(\bm{y}, \db) = }
+    \addConstraint
+      {\sum_{j\in \mathcal{N}^+(i)} \xijk - \sum_{j \in \mathcal{N}^-(i)} \xijk}
+      {= d_i^k, \quad}
+      {\forall \, i \in \mathcal{N}, \commodities}
+    \addConstraint
+      {\sumCommodities \xijk}
+      {\leq u_{ij} y_{ij}, \quad}
+      {\forall \, \arcs, \commodities}
+    \addConstraint{\xijk}{\geq 0}{\forall\, \arcs, \commodities}
+\end{minie}
+
+This stochastic formulation is not computationally tractable on a large scale. We must rewrite the stochastic formulation into a two-stage Prediction-Optimization pipeline: the first stage predicts the demands from the contextual information, and the second stage solves the deterministic optimization problem, as illustrated in Figure~\ref{fig:litrev:dfl-pipeline}. The prediction model $f_\theta$, defined by weights $\theta$, uses contextual information $\phib$ and outputs a point prediction for the demand $\dhat$. The optimization stage takes this prediction and solves the corresponding deterministic MCFND problem from (\ref{eq:litrev:mcfnd}), outputting the optimal network that fulfills the predicted demand. We write the optimal network as follows:
+\begin{defin}
+    The optimal network for a realization of demand $\db$ can be written as:
+    \begin{equation*}
+        z^*(\db) = (x^*(\db), y^*(\db)) := \mathrm{MCFND}(\db),
+    \end{equation*}
+    where $x^*(\db)$ and $y^*(\db)$ are the optimal flow and design variables respectively.
+\end{defin}
+
+Example~\ref{exmp:methodology:opti-def} shows the deterministic optimization pipeline on a small network with two arcs and only a single commodity. We will use this minimal example to illustrate further concepts and evaluate models later in this thesis. 
+
+\begin{exmp} 
+\label{exmp:methodology:opti-def}
+We define the MCFND problem on a small graph $\mathcal{G} = (\mathcal{N}, \mathcal{A})$. Let $\mathcal{N} = \{s, t\}$ and let $\mathcal{A} = \{p, q\}$ where both arcs $p$ and $q$ link node $s$ to node $t$. We suppose we are transporting a single commodity $k$, i.e. $\mathcal{K} = \{k\}$. 
+
+Let ${u_p}$ and ${u_q}$ be the capacity of arcs $p$ and $q$ with respective design costs ${f_p}$ and  ${f_q}$ and respective flow costs  ${c_p^k}$ and ${c_q^k}$.
+
+Let ${d^k}$ be the uncertain demand for commodity $k$, and let ${d^k_s} = -{d^k}$ and ${d^k_t} = {d^k}$ be the demand for commodity $k$ at nodes $s$ and $t$. Since ${d_t^k} = -{d_s^k}$, we can simplify the model by only considering flow fulfillment constraints on node $t$:
+
+\begin{minipage}{0.35\textwidth}
+    \begin{center}
+        \input{res/fig/metho-example-network}
+    \end{center}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+    \begin{argmini*}|s|
+        {}
+        {{f_p} y_p + {f_q} y_q + {c_p^k} x_p^k +{c_p^k} x_p^k} + 
+        {\mathrm{MCFND}({d^k}) =}
+        {}
+        \addConstraint{x_p^k + x_q^k}{= {d^k}}{}
+        \addConstraint{x_p}{\leq {u_p} y_p}{}
+        \addConstraint{x_q}{\leq {u_q} y_q}{}
+        \addConstraint{x_p, x_q}{\geq 0}{}
+        \addConstraint{y_p, y_q}{\in \{0, 1\}.}{}
+    \end{argmini*}
+\end{minipage}   
+\end{exmp}
+
+The goal is for the Prediction-Optimization pipeline to make the best possible decisions given the contextual information. We therefore train the prediction model $f_\theta$ so that its demand predictions lead to good downstream decisions. The actual training method varies between prediction models, but all are based on the ERM principle. According to the ERM principle, the training procedure selects the model weights $\theta$ that yield the lowest error over a dataset of training data points $\mathcal{D}_{\text{train}} = \{(\phib_l, \db_l)\}_{l=1}^L$. The error of a prediction model is measured by a loss function $\mathcal{L}$. Traditional prediction models minimize a loss function that evaluates the accuracy of the prediction, such as Mean Squared Error. We would like to minimize regret $\mathcal{L}_{\text{regret}}$ from Definition~\ref{defin:litrev:regret}, which evaluates the cost of the decisions that result from the prediction. Since our problem contains uncertain parameters in the constraints, we cannot use the simple regret defined in Definition~\ref{defin:litrev:simple-regret} and must define what the cost of a solution under the actual demand $C(z, \db)$. We expand on this point in Section~\ref{sec:methodology:regret-issues}. Each model has a different training procedure, which we explain in Section~\ref{sec:methodology:training-the-models}.
+
+% ==============================================================
+% ==============================================================
+% ==============================================================
+
+\section{Evaluation of Prediction-Optimization Pipeline Performance} \label{sec:methodology:pipeline-eval}
+
+Evaluating the performance of the pipeline is not as straightforward as comparing decision costs, since the feasible region can change based on the predicted demand. Two different demand predictions in the prediction stage can result in two different networks being designed in the optimization stage. A network designed for one demand prediction might not be feasible for another value of demand, and neither network is guaranteed to fulfill the actual demand. We must design a procedure that can meaningfully compare pipeline performance.
+
+\begin{algorithm}
+    \caption{Evaluation of a ND Prediction-Optimization pipeline}\label{alg:methodology:pipeline-evaluation}
+    \DontPrintSemicolon
+    \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+    
+    \KwIn{Contextual information $\phib_{\text{new}}$}
+    \AlignedKwIn{Actual demand $\db_{\text{new}}$}
+    \AlignedKwIn{Trained prediction model $f_\theta$}
+    \KwOut{}
+    
+    \BlankLine
+
+    \textit{First stage: run Prediction-Optimization pipeline}
+
+    \nl Compute demand prediction $\dhat \gets f_\theta(\phib_{\text{new}})$\;
+    
+    \nl Solve network for predicted demand $x^*(\dhat), y^*(\dhat) \gets \mathrm{MCFND}(\dhat)$ \;
+
+    \BlankLine
+
+    \textit{Second stage: evaluate design on flow problem}
+
+    \nl Solve $C = \text{MCFND-Flow}(\db_{\text{new}}, y^*(\dhat))$ and get optimum of decision variables $x^*_\text{Flow}$\;
+    \nl Count number of recourse arcs used $N$ in solution $x^*_\text{Flow}$\;
+    \BlankLine
+    \nl Return metrics $N$ and $C$\;
+    
+\end{algorithm}
+
+Algorithm~\ref{alg:methodology:pipeline-evaluation} allows us to compare the downstream optimization cost of a Prediction-Optimization pipeline on a new data point $(\phib_{\text{new}}, \db_{\text{new}})$.
+The evaluation algorithm proceeds in two stages. 
+First, the pipeline predicts demand $\dhat$ and finds an optimal network $x^*(\dhat), y^*(\dhat)$ that fulfills the predicted demand. 
+Second, we solve the recourse problem $\text{MCFND-Flow}$, a problem defined in (\ref{eq:methodology:mcfnd-flow}) and that is similar to the second stage of the stochastic ND problem in (\ref{eq:methodology:lower-stoch-mcfnd}). The design variables of MCFND-Flow are fixed to $y_{ij} = [y^*(\dhat)]_{ij}$, and the flow variables $x_{ij}$ fulfill the actual demand $\db_{\text{new}}$. 
+This is analogous to the two-stage stochastic formulation in (\ref{eq:methodology:upper-stoch-mcfnd}) and (\ref{eq:methodology:lower-stoch-mcfnd}): the network is designed in the first stage when demand is still uncertain; after the actual demand is revealed, recourse action is taken in the second stage so that the flow variables on fixed arcs fulfill the actual demand.
+
+The recourse problem MCFND-Flow in (\ref{eq:methodology:mcfnd-flow}) evaluates the quality of a network $y^*(\dhat)$ designed by a Prediction-Optimization pipeline against the actual demand $\db$. The formulation uses the same constraints as the standard MCFND, but design variables are fixed in constraints (\ref{eq:methodology:mcfnd-flow-fix-design}). Furthermore, if the demand prediction is too low compared to the actual demand, the arcs selected in $y^*(\db)$ might not have enough capacity to transport all of the actual demand, making the network infeasible. We avoid this by adding recourse arcs $(\text{orig}(k), \text{dest}(k))$ from the origin to the destination of each commodity $k$. The set of arcs in MCFND-Flow becomes: \begin{equation}
+    \begin{aligned}
+    &\mathcal{A}_\text{rec} = \{(\text{orig}(k), \text{dest}(k)) : \commodities\}\\
+    &\mathcal{A}_\text{flow} = \mathcal{A} \cup \mathcal{A}_\text{rec}.
+\end{aligned} 
+\end{equation}
+The set of outgoing and incoming neighbours is thus written as: \begin{equation}
+    \begin{aligned}
+    \mathcal{N}^+_i &= \{j \in \mathcal{N} : (i, j) \in \mathcal{A}_\text{flow} \}\\
+    \mathcal{N}^-_i &= \{j \in \mathcal{N} : (j, i) \in \mathcal{A_\text{flow}} \}.
+\end{aligned}
+\end{equation}
+We write the recourse arcs flow variables $x_\text{rec}^k$. Since we want the recourse arcs to carry the remaining demand not carried by the other arcs, we do not enforce capacity constraints (\ref{eq:methodology:mcfnd-flow-capacity}).
+We set the cost of flow over the recourse arcs to a value larger than all other flow costs, so that the recourse arcs are only used for demand which cannot be fulfilled using the original arcs: 
+\begin{equation}
+    c_\text{rec} \gg \max \{c_{ij}^k \}.
+\end{equation}
+Despite the design variables being constant, we keep the design cost calculation inside the objective (\ref{eq:methodology:mcfnd-flow-objective}). The objective thus equals the total cost of the Prediction-Optimization pipeline solution, including design and flow costs. We can define MCFND-Flow as follows:
+
+\begin{minie}
+    {{\tiny x_{ij}^k, x^k_\text{rec}}}
+    {\sumArcs f_{ij}y_{ij} + \sumArcs\sumCommodities c_{ij}^k x_{ij}^k + c_\text{rec} \cdot \sumCommodities x^k_\text{rec} \label{eq:methodology:mcfnd-flow-objective}}
+    {(MCFND-Flow) \label{eq:methodology:mcfnd-flow}}
+    {}%
+    %
+    %
+    \addConstraint{\sum_{j\in \mathcal{N}_i^+} \xijk - \sum_{j \in \mathcal{N}_i^-} x_{ji}^k}{= d_i^k, \quad}{\forall \nodes, \commodities}
+    \addConstraint{\sum_\commodities \xijk}{\leq u_{ij} y_{ij}, \quad \label{eq:methodology:mcfnd-flow-capacity}}{\forall \arcs}
+    \addConstraint{\xijk}{\geq 0, \quad}{\forall (i,j) \in \mathcal{A}_\text{flow}, \commodities}
+    \addConstraint{y_{ij}}{= [y^*(\dhat)]_{ij}, \quad \label{eq:methodology:mcfnd-flow-fix-design}}{\forall \arcs.}
+\end{minie}
+
+We use two metrics to evaluate Prediction-Optimization pipelines: $N$, the number of recourse arcs used, and $C$, the total pipeline cost on the evaluation procedure. We compute $N$ by counting the number of recourse arcs with non-zero flow:
+\begin{equation}
+    N = \left|\{x^k_\text{rec} : x^k_\text{rec} \geq 0, \commodities \}\right|.
+\end{equation}
+Only solutions where no recourse path is used, i.e. where $N = 0$, are feasible in the original MCFND and can actual demand. The total pipeline cost $C$ is equal to the value of objective (\ref{eq:methodology:mcfnd-flow-objective}). It includes the design cost of the network from the Prediction-Optimization pipeline, the flow cost to fulfill the actual demand, and the recourse flow cost of unfulfilled demand.
+
+% ==============================================================
+% ==============================================================
+% ==============================================================
+
+\section{Regret-Related Issues} \label{sec:methodology:regret-issues}
+
+A loss function gives a measure of the error between a given observed value of an uncertain parameter and the predicted value. Consider an optimization problem with uncertain parameters, where $\xi$ is the observed value of the uncertain parameters and $\hat{\xi}$ is the predicted value. The optimal decision under the observed value is $z^*(\xi)$, and the optimal decision under the predicted value is $z^*(\hat{\xi})$. Regret measures the error in predicting $\hat{\xi}$ by comparing the cost of $z^*(\hat{\xi})$ and the cost of $z^*(\xi)$, after the true value of the parameters is known. The cost of $z^*(\hat{\xi})$ is computed under the optimization problem with parameters $\xi$. Recall Definition~\ref{defin:litrev:regret} from \cite{sadanaSurveyContextualOptimization2023}:
+\begin{equation*}
+    \mathcal{L}_\text{regret}(\hat{\xi}, \xi) = C(z^*(\hat{\xi}), \xi) - C(z^*(\xi), \xi).
+\end{equation*}
+
+The regret loss is well defined when only the objective parameters $c$ are uncertain. Every solution that is feasible under the prediction $\hat{c}$ is also feasible under the actual value $c$. Only the cost of the decisions changes, so the regret use the formulation in Definition~\ref{defin:litrev:simple-regret}, which we recall is:
+\begin{equation*}
+    \mathcal{L}_\text{regret}(\hat{c}, c) = c^\top z^*(\hat{c}) - c^\top z^*(c).
+\end{equation*}
+This is the most common formulation in the literature on DFL or CSO \citep{sadanaSurveyContextualOptimization2023, sunMaximumOptimalityMargin2023, elmachtoubSmartPredictThen2022, kotaryEndtoEndConstrainedOptimization2021}. Numerous approaches to optimize this regret loss exist already. For gradient-based minimization algorithms, the difficulty resides in differentiating through the optimization problem $z^*(\hat{c})$, e.g.:
+\begin{equation}
+    \dfrac{\partial \mathcal{L}_\text{regret}}{\partial \hat{c}} = \dfrac{\partial \mathcal{L}_\text{regret}}{\partial z^*(\hat{c})} \cdot \dfrac{\partial z^*(\hat{c})}{\partial \hat{c}} = c^\top \dfrac{\partial z^*(\hat{c})}{\partial \hat{c}}.
+\end{equation}
+
+The regret-based loss function in Definition~\ref{defin:litrev:regret} is ill-defined in the case where the uncertain parameters are in the constraints and not the objective. Predicting the constraint parameters changes the feasible region of the optimization problem. A different feasible region can change the optimal decision, even if the cost vector is identical. Furthermore, decisions that are feasible under the predicted constraints may be infeasible in the actual optimization problem, including the optimum. Figure~\ref{fig:methodology:regret-issues} illustrates these points. Therefore, we cannot directly compare the costs of decisions across optimization problems, and we cannot use the regret formulation in Definition~\ref{defin:litrev:simple-regret}. Instead, we need to define a decision cost $C(z^*(\hat{\xi}), \xi)$ that can evaluate any decision $z^*(\hat{\xi})$.
+
+\begin{figure}[ht]
+    \centering
+    
+    \begin{minipage}{.45\linewidth}
+    \input{res/fig/metho-dfl-predicting-costs}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{.45\linewidth}
+    \input{res/fig/metho-dfl-predicting-constraints}
+    \end{minipage}
+    
+    \caption{
+    Left: uncertain costs -- predicting $\hat{\bm{c}}_1$ results in the optimal decision $z^*(\hat{\bm{c}}_1) = z^*(\bm{c})$ whereas a small error resulting from predicting $\hat{\bm{c}}_2$ leads to a suboptimal decision $z^*(\hat{\bm{c}}_2)$ under actual cost $\bm{c}$ (adapted from \cite{sadanaSurveyContextualOptimization2023}). The feasible region $\mathcal{Z}$ is identical in all cases.\newline\newline%
+%
+    Right: uncertain constraints -- predicting constraint parameter $\dhat_1$ results in feasible region $\mathcal{Z}_1$, which has the same optimal decision $z^*(\dhat_1) = z^*(\db)$ as the actual feasible region $\mathcal{Z}$. Predicting $\dhat_2$ results in feasible region $\mathcal{Z}_2$, whose optimal solution $z^*(\dhat_2)$ is not feasible in the actual feasible region $\mathcal{Z}$.
+    }
+    \label{fig:methodology:regret-issues}
+\end{figure}
+
+Few ideas exist in the literature for formulating a regret for optimization problems with uncertain constraints. Only \cite{dontiTaskbasedEndtoendModel2017} and \cite{paulusCombOptNetFitRight2022} consider the case of uncertain constraints and not objectives.  \cite{dontiTaskbasedEndtoendModel2017} define a similar loss to regret for stochastic quadratic programs with both uncertain objectives and constraints. We recall their formulation from (\ref{eq:litrev:task-loss-constraints}) as:
+\begin{equation}
+    \mathcal{L}(\theta) = \mathbb{E}_{\phib, \db \sim \mathcal{D}}[f(\phib, \db, z^*(\phib ; \theta))] + \sum_{i=1}^{N} \bm{I}\left\{\mathbb{E}_{\phib, \db \sim \mathcal{D}}[g_i(\phib, \db, z^*(\phib ; \theta))] \leq  0\right\},
+\end{equation}
+where the indicator function $\bm{I}\{\cdot\}$ is zero if a constraint is satisfied and infinite otherwise. We note that the loss does not provide meaningful information when a constraint is violated, and that the derivative $\tfrac{\partial \mathcal{L}_\text{regret}}{\partial z^*(\hat{\xi})}$ is not well-defined. \cite{dontiTaskbasedEndtoendModel2017} use a form of constrained stochastic gradient descent to address this problem, but do not provide any theoretical guarantees or numerical results showing  that the above loss function works when the constraints are uncertain.
+\cite{paulusCombOptNetFitRight2022} also handle uncertain objective and constraints by providing a meaningful gradient for $\tfrac{\partial z^*(\hat{\xi})}{\partial \hat{\xi}}$, even when constraints are violated. However, the decisions $z^*(\xi)$ are compared using MSE distance, a loss function that is differentiable with respect to the decision but does not meaningfully capture the cost of a ND program. In the first case, the loss function is based on regret and is defined when the constraints are violated, but its gradient is neither well-defined nor informative when the constraints are violated.
+
+We have two ideas for formulating a regret loss for uncertain constraints: custom losses and using a Lagrangian relaxation. The first idea would be to create a custom loss function that expresses the regret of a decision, similar to the evaluation procedure we developed in Algorithm~\ref{alg:methodology:pipeline-evaluation}. Although this procedure is well defined for our use case, it has many limitations. In particular, it is specifically limited to a ND problem with uncertain commodity demand, and changing the cost of the recourse path changes the regret cost. Furthermore, since computing the cost requires solving another MILP, finding the gradient of the loss requires differentiating through another MILP. The second idea is to apply Lagrangian relaxation to the uncertain constraints, so that the uncertain parameters are in the objective function, and then use the traditional definition of regret. This avoids the issue of uncertain constraints changing the feasible region, but means that the cost no longer represents the true regret under the original problem and some information may be lost. More research is needed in this area.
+
+% ==============================================================
+% ==============================================================
+% ==============================================================
+
+\section{\textit{IO-constraint} -- Training the Prediction Model Using Inverse Optimization} \label{sec:methodology:training-the-models}
+
+In this section, we present \textit{IO-constraint}, a prediction model based on IO, and we compare its performance to a baseline linear prediction model in Section~\ref{sec:eval:io-constraint}. The model embeds the prediction model inside a forward optimization model and uses IO to recover prediction model weights. \textit{IO-constraint} uses the original MCFND formulation with relaxed integrality constraints as a forward model. It embeds a linear prediction model into the flow conservation constraints and recovers the model weights using an IO method for constraint recovery. 
+
+%\textit{IO-relax} uses the MCFND formulation with relaxed integrality constraints and embedded prediction model, but uses the Lagrangian relaxation of the flow conservation constraints. The Lagrangian relaxation places the uncertain parameters in the objective of the forward problem. \textit{IO-relax} uses an objective recovery method from IO to recover the prediction model weights. 
+
+\textit{IO-Constraint} recovers the weights of a demand prediction linear model using the IO constraint recovery method from \cite{ghobadiInferringLinearFeasible2021}. We first define the linear prediction model we use for predicting demands. We then define a forward problem with the linear prediction model embedded in the flow conservation constraints. We formulate the corresponding IO model that recovers the weights of the prediction model. 
+
+We use the method from \cite{ghobadiInferringLinearFeasible2021} because it can recover parameters in the constraints of an optimization model. We define a forward problem in which some constraint parameters are unknown. The method formulates a corresponding IO model that takes a set of feasible solutions to the forward model and finds the most appropriate value for the unknown constraint parameters. We choose this method because it supports constraint recovery even when some constraints are partially known. However, the method has the following limitations:
+\begin{enumerate}
+    \item The forward model must be an LP.
+    \item The objective parameters must be known.
+    \item The cheapest feasible solution given to the inverse model is assumed to be optimal.
+\end{enumerate}
+
+The training dataset is composed of contextual features, actual demands, and optimal solutions to the original MCFND:
+\begin{equation}
+    \mathcal{D}_\text{train} = \{(\phib_l, \db_l, x^*(\db), y^*(\db))\}^L_{l=1}.
+\end{equation}
+
+We use a linear prediction model $f_{\Theta}$ to produce a point estimate for the demand $\db \in \mathbb{R}^{|\mathcal{K}|}$ given the contextual information $\phib \in \mathbb{R}^m$. The model has weights $\bm{\theta}_k \in \mathbb{R}^m$ for each commodity $\commodities$, which form a weight matrix $\Theta = [\bm{\theta}_1 \cdots \bm{\theta}_{|\mathcal{K}|}]^\top$. Given contextual information $\phib \in \mathbb{R}^m$, the model outputs a prediction for the demand vector $\dhat = [\hat{d}^1 \cdots \hat{d}^{|\mathcal{K}|}]^\top$:
+\begin{equation}
+    \dhat = f_\Theta(\phib) = \Theta\phib = \begin{bmatrix}
+        \theta_1^\top \phib\\
+        \vdots\\
+        \theta^\top_{|\mathcal{K}|} \phib
+    \end{bmatrix}.
+\end{equation}
+
+The forward model is based on the MCFND formulation of (\ref{eq:litrev:mcfnd}). We relax Constraints (\ref{eq:litrev:mcfnd-integrality}), which we recall are: 
+\begin{equation*}
+    y_{ij} \in \{0, 1\}, \quad \forall (i,j) \in \mathcal{A},
+\end{equation*} 
+that enforce the integrality of the design variables $y_{ij}$. Since the demand by node $d^k_i$ in (\ref{eq:methodology:demand-by-node}) is zero everywhere except at commodity origin nodes $\mathrm{orig}(k)$ and commodity destination nodes $\mathrm{dest}(k)$, we split the flow conservation Constraints (\ref{eq:litrev:mcfnd-flow-cons}), whose formulation is:
+\begin{equation*}
+    \sum_{j\in \mathcal{N}_i^+} x_{ij}^k - \sum_{j\in\mathcal{N}^-_i} x^k_{ij} = d_i^k, \quad \forall i \in \mathcal{N}, k \in \mathcal{K},
+\end{equation*} 
+into three separate constraints: conservation at commodity destination nodes, where $d_i^k = d^k$, flow conservation at commodity origin nodes, where $d_i^k = -d^k$, and flow conservation at all other nodes, where $d^k_i = 0$. For every context-demand pair $(\phib, \db)$, we express the actual demand for a commodity $d^k$ as a sum of predicted demand and an error term $\epsilon_k \in \mathbb{R}$:
+\begin{equation} \label{eq:methodology:prediction}
+    d^k = \theta_k^\top \phib + \epsilon_k.
+\end{equation}
+We replace the actual demand $d^k$ in Constraints (\ref{eq:methodology:io-constraint-fwd-flow-dest}) and (\ref{eq:methodology:io-constraint-fwd-flow-orig}) with the prediction in (\ref{eq:methodology:prediction}) above. This forward model integrates the demand prediction model into the optimization problem. It introduces new decision variables $\phib \in \mathbb{R}^m$. These decision variables are left free in the forward model. The forward model can thus be written as:
+
+\begin{minie}
+    {}
+    {\sum_\arcs f_{ij} y_{ij} + \sum_\commodities \sum_\arcs c_{ij}^k \xijk}
+    {({IO-Constraint-forward})}
+    {{}}
+%
+    \addConstraint{\sum_{j\in \mathcal{N}_i^+} \xijk - \sum_{j \in \mathcal{N}_i^-} x_{ji}^k}{= \theta_k^\top \phib, \quad \label{eq:methodology:io-constraint-fwd-flow-dest}}{\forall \commodities,\, i = \text{dest}(k)}
+%
+    \addConstraint{\sum_{j\in \mathcal{N}_i^+} \xijk - \sum_{j \in \mathcal{N}_i^-} x_{ji}^k}{= - \theta_k^\top \phib, \quad \label{eq:methodology:io-constraint-fwd-flow-orig}}{\forall \commodities,\, i = \text{orig}(k)}
+%
+    \addConstraint{\sum_{j\in \mathcal{N}_i^+} \xijk - \sum_{j \in \mathcal{N}_i^-} x_{ji}^k}{= 0, \quad \label{eq:methodology:io-constraint-fwd-flow-rest}}{\forall \commodities,\, i \in \mathcal{N}_\text{rest}}
+%
+    \addConstraint{\sum_\commodities \xijk}{\leq u_{ij} y_{ij}, \quad \label{eq:methodology:io-constraint-fwd-capacity}}{\forall \arcs}
+%
+    \addConstraint{\xijk}{\geq 0, \quad \label{eq:methodology:io-constraint-fwd-postive}}{\forall \arcs, \commodities}
+%
+    \addConstraint{0 \leq y_{ij}}{\leq 1, \quad \label{eq:methodology:io-constraint-fwd-integrality}}{\forall \arcs.}
+\end{minie}
+
+The goal of the inverse model is to recover the constraint parameter values $\theta^k \in \mathbb{R}^m$, based on a collection of solutions to the forward model $(\phib_l, x^*(\db_l), y^*(\db_l))$ from the training dataset $\mathcal{D}_\text{train}$.
+As the conditions outlined at the beginning of this sections are met, we use the tractable multiple-point IO formulation (\ref{eq:litrev:inverse-ghobadi}) from \cite{ghobadiInferringLinearFeasible2021}. We divide the constraints of the forward problem into two groups: known constraints and unknown constraints. 
+Constraints (\ref{eq:methodology:io-constraint-fwd-flow-rest}), (\ref{eq:methodology:io-constraint-fwd-capacity}), (\ref{eq:methodology:io-constraint-fwd-postive}), and (\ref{eq:methodology:io-constraint-fwd-integrality}) form the set of known constraints and are not expressed explicitly in the inverse model. 
+Constraints (\ref{eq:methodology:io-constraint-fwd-flow-dest}) and (\ref{eq:methodology:io-constraint-fwd-flow-orig}) are only partially known. Although we know the coefficients for the flow variables, the prediction weights and the error terms remain unknown. Therefore, we consider these partially known constraints as part of the unknown constraints and add the known information as new constraints on the constraint parameters in the inverse model. We use the formulation from (\ref{eq:litrev:inverse-ghobadi}) to write the inverse model and adapt it to the constraints of the forward model. We detail the translation in Appendix \ref{sec:appendix:io-constraint-formulation}. We obtain the following optimization model:
+
+\begin{minie}[1]
+    {\theta_k, \epsilon}
+    {\sum_{k=1}^K \sum_{l=1}^{L} (\epsilon^l_k)^2}
+    {(\textit{IO-constraint})\label{eq:methodology:io-constraint}}
+    {}%
+    %
+    \addConstraint{\sum_{j\in \mathcal{N}_i^+} [x^*(\db_l)]_{ij}^k - \sum_{j \in \mathcal{N}_i^-} [x^*(\db_l)]_{ji}^k - \sum_{r=1}^m \theta_{kr} \phib^l_r}{= \epsilon^l_k, \quad \label{eq:methodology:io-constraint-flow-dest}}{\forall \commodities,\, i = \text{dest}(k),\, l = 1,\ldots, L}
+    %
+    \addConstraint{\sum_{j\in \mathcal{N}_i^+} [x^*(\db_l)]_{ij}^k - \sum_{j \in \mathcal{N}_i^-} [x^*(\db_l)]_{ji}^k + \sum_{r=1}^m \theta_{kr} \phib^l_r}{= - \epsilon^l_k, \quad \label{eq:methodology:io-constraint-flow-orig}}{\forall \commodities,\, i = \text{orig}(k), l = 1,\ldots, L}
+    %
+    \addConstraint{\theta^k_r}{\in \mathbb{R}, \quad}{\forall\, \commodities, r = 1\ldots m}
+    \addConstraint{\epsilon^l_m}{\in \mathbb{R}, \quad}{\forall\, \commodities, l = 1,\ldots L.}
+\end{minie}
+
+The inverse formulation introduces parameters $\epsilon_k^l$, which measure the slack of the flow conservation Constraints (\ref{eq:methodology:io-constraint-flow-dest}) and (\ref{eq:methodology:io-constraint-flow-orig}) for each forward solution $l=1,\ldots, L$. By minimizing the sum of the squared slack distances, the methodology uses the adjacency measure from \cite{ghobadiInferringLinearFeasible2021} as a loss function $\mathcal{F}(\bm{A}, \bm{b}, \mathcal{D})$ to determine the feasible region. 
+
+We employ IO techniques to train a predictive model that is capable of being utilized on fresh data points without having to rerun the inverse model. The \textit{IO-constraint} inverse model retrieves the weights $\theta_k$ of the prediction model by minimizing slack in the flow conservation constraints, using a training dataset of forward solutions $\mathcal{D}_\text{train}$. These weights are then used to create a trained prediction model $f_{\hat{\Theta}}$, which can project the demand for new contextual information $\phib_\text{new}$. 
+
+We expect \textit{IO-constraint} not to optimize for decision regret but instead to minimize prediction error. Indeed, as explored in Section \ref{sec:methodology:regret-issues}, regret-based losses are ill-defined when the constraints are uncertain.
+Furthermore, we can see by inspection of constraints (\ref{eq:methodology:io-constraint-flow-dest}) that the left-hand side is the difference between the total flow on destination node $i$ and the demand prediction made by the model. However, in the forward solution, the total flow on destination node $i$ comes from the original MCFND problem, meaning the total flow sums to the actual demand $d^k_l$. We can thus rewrite the constraint as:
+\begin{equation}
+    \db_l^k - \sum_{r=1}^m \theta_{kr} \phib^l_r = \epsilon^l_k.
+\end{equation}
+The same rewriting can be done for constraints (\ref{eq:methodology:io-constraint-flow-orig}) by replacing the total flow with $-\db^l_k$
+The $\epsilon^l_k$ slack variables can be interpreted as the residuals between the actual demand $\db_l^k$ and the predicted demand $\sum_{r=1}^m \theta_{kr} \phib^l_r$. By minimizing the sum of the squared residuals, we are actually performing Ordinary Least Squares regression. We can also perform Least Absolute Deviation regression by minimizing the sum of the absolute value of the residuals instead. In any case, we do not expect this model to perform any better than a regular OLS or LAD regression on the training dataset $(\phib_l, \db_l)$.
+
+% \subsection{\textit{IO-relax} -- relaxing the flow constraints}
+
+% ==============================================================
+% ==============================================================
+% ==============================================================
+
+\section{Improving on Linear Regression: Re-weighting the Training Examples} \label{sec:methodology:weightings}
+
+None of the methods presented so far can improve on sequential Prediction-Optimization pipelines for ND problems. Issues with the ill-definition of regret when the constraints are uncertain prevent us from using existing integrated prediction and optimization methods from the literature. IO methods for constraint recovery suffer from a similar problem: despite integrating the prediction model training into the optimization problem, performance does not improve over a separately trained prediction model. New approaches are needed, which is beyond the scope of this thesis. However, in this section, we outline how DFL can be viewed as a reweighting of the loss function, and how this view can be a starting point for a new approach to solving DFL problems.
+
+Predictive models trained on prediction accuracy will perform well in a Prediction-Optimization pipeline when the model and the data are aligned. For example, when demands are generated independently using a linear function of contextual information, a linear prediction model will produce accurate predictions, resulting in good downstream optimization costs. If the model is misspecified with respect to the data, it will not accurately reflect the data distribution. The model must then make trade-offs and aims for the lowest prediction error averaged over all training examples. However, some predictions may affect the downstream optimization problem more than others. Predictions that have a large impact on the downstream optimization cost could be weighted more heavily in the training procedure. This would result in a model that makes less accurate predictions overall, as measured by prediction loss, but is more accurate for predictions that have a large impact on optimization cost. 
+
+DFL can be thought of as a reweighting of the training examples in the loss function, where the weighting is a hyperparameter of the predicting model. We need a systematic way to find weightings that improve downstream optimization cost. Ideally, the weighting of a commodity should reflect the marginal contribution of the commodity to the cost of the optimization problem. The experiment in Section \ref{sec:eval:reweighting} demonstrates the usefulness of reweighting the training examples in the loss function to obtain lower downstream optimization cost despite higher prediction error. In this example, good weightings can be found by inspecting the structure of the ND problem, but this is however not possible in more complex cases. 
+
+Suppose we use the Prediction-Optimization pipeline evaluation procedure from Algorithm \ref{alg:methodology:pipeline-evaluation} as in our new definition of regret, then we can formulate the search for the correct weightings as a nonlinear, multi-level optimization problem that finds prediction model weights and training example weightings that minimize regret over the training examples. We express the regret of a demand prediction $\dhat_l$ for the $l$-th training example $(\phib_l, \db_l)$. If $\text{MCFND-Flow}(\db_l, y^*(\dhat_l))$ is the evaluation procedure cost of the prediction from (\ref{eq:methodology:mcfnd-flow}), and $\text{MCFND}(\db_l)$ is the true cost of fulfilling demand $\bm{d}_l$, we can write the regret as:
+\begin{equation} \label{eq:methodology:regret-new}
+    \mathcal{L}_\text{regret}(\dhat_l, \db_l) = \text{MCFND-Flow}(\db_l, y^*(\dhat_l)) - \text{MCFND}(\db_l).
+\end{equation}
+Our optimization problem defines prediction weights and training example weightings that minimize regret (\ref{eq:methodology:regret-new}) over the training dataset. We formulate this optimization as follows:\\
+\begin{minie}
+    {\bm{w} \in \mathbb{R}^L_{\geq 0}}
+    {\sum_{l=1}^L \left[ \text{MCFND-Flow}(\db_l, y^*(f_{\hat{\Theta}}(\phib_l | \bm{w})) - \text{MCFND}(\db_l) \right]    \label{eq:methodology:w-dfl-objective}}
+    {(W-DFL) \label{eq:methodology:w-dfl}}
+    {}%
+    %
+    \addConstraint{\sum_{l=1}^L w_l}{= 1 \label{eq:methodology:w-dfl-sumtoone}}{}
+    %
+\end{minie}
+The optimization problem defines a weighting $\bm{w} = [w_1, \ldots, w_L]$ that minimizes the regret over the training dataset in Objective~(\ref{eq:methodology:w-dfl-objective}). Constraint~(\ref{eq:methodology:w-dfl-sumtoone}) ensures the weights sum to 1. The demand predictions are made with a weighted linear prediction model: \begin{equation}
+    \dhat_l = f_{\hat{\Theta}}(\phib_l | \bm{w}) = \hat{\Theta}\phib_l,
+\end{equation}
+where the predictions weights $\hat{\Theta} = [\hat{\theta}_1, \ldots, \hat{\theta}_{|\mathcal{K}|}]^\top$ depend on the weighting $\bm{w}$ of the training examples. The following optimization problem is a weighted linear regression and defines the prediction weights $\hat{\Theta}$:\\
+\begin{argminie}
+    {\theta_1 \ldots \theta_{|\mathcal{K}|}}
+    {\sum_{l=1}^{L} \left[w_l \cdot \sum_{k=1}^K (\epsilon^k_l)^2 \right]\label{eq:methodology:wlinreg-objective}}
+    {\label{eq:methodology:wlinreg}}
+    {\hat{\theta}_1, \ldots, \hat{\theta}_{|\mathcal{K}|} = }%
+    %
+    \addConstraint{\sum_{r=1}^m \theta_{kr} \phib^l_r + \epsilon^k_l}{= d^k_l, \quad \label{eq:methodology:wlinreg-pred}}{\forall \commodities,\, l = 1,\ldots, L}
+    %
+    %
+    \addConstraint{\epsilon^k_l}{\in \mathbb{R}, \quad}{\forall\, \commodities, l = 1,\ldots L}
+    \addConstraint{\theta^k_r}{\in \mathbb{R}, \quad}{\forall\, \commodities, r = 1\ldots m.}
+\end{argminie}
+
+The prediction weights defined by the W-DFL model minimize regret over the training examples, thus achieving the goal of integrating the prediction and optimization steps of a pipeline, but W-DFL is a nonlinear and multilevel optimization problem that cannot be solved efficiently with current algorithmic techniques. Blackbox optimization solvers such as NOMAD \citep{nomad4paper} can solve small instances of this problem, but we propose a simple iterative method to approximate the solution to W-DFL. This method is not intended to find the optimal solution to W-DFL, but to show the possible value of iterative reweighting. The iterative method begins at $t=0$ with all training examples weighted equally:\begin{equation}
+    w_l^{(0)} = 1, \quad\forall l=1,\ldots, L.
+\end{equation}
+At each subsequent iteration, we train a linear regression model on the training dataset using the current weightings. Using the trained prediction model, we predict the demand for each training example and compute the regret $\mathcal{L}_{\text{regret}}(\dhat_l^{(t)}, \db_l)$ of the training example. We update the weighting of each training dataset proportionally to its overall contribution to the total regret , then use the new weightings at the next iteration.
+We can write the weight update at iteration $t = 0, 1, \dots$ as:
+\begin{align}
+    \bar{w}_l^{(t+1)} &= w_l^{(t)} + \dfrac{\mathcal{L}_{\text{regret}}(\dhat_l^{(t)}, \db_l)}{\sum_{l'=1}^L  \mathcal{L}_{\text{regret}}(\dhat_{l'}^{(t)}, \db_{l'})} \cdot w_l^{(t)},\label{eq:methodology:update-weights-prop}\\
+    w_l^{(t+1)} &= \dfrac{\bar{w}_l}{\sum_{l=1}^L \bar{w}_l},\label{eq:methodology:update-weights-norm}
+\end{align}
+where (\ref{eq:methodology:update-weights-prop}) computes the proportional update and normalizes (\ref{eq:methodology:update-weights-norm}) the weights between 0 and 1.
+We test this iterative method on a small example in Section \ref{sec:eval:iterative}. This method is currently a heuristic without strong theoretical backing. It may be limited to specific networks and situations. 
+

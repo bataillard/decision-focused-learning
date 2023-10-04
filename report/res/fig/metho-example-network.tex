@@ -1,0 +1,16 @@
+\begin{tikzpicture}[
+    main/.style={draw, circle}, node distance={30mm},
+    close/.style={}] 
+    \node[main] (1) {\Large $s$};
+    \node[main] (2) [right of=1] {\Large $t$};
+    \node (3) [right=0mm of 2] {${d^k}$};
+    
+    \begin{scope}[every node/.style={fill=white,circle},
+                  every edge/.style={thick}]
+        \draw[->] (1) to [out=45, in=135, looseness=0.8] node[midway] (p) {p} (2);
+        \draw[->] (1) to [out=-45, in=-135, looseness=0.8] node[midway] (q) {q} (2);
+
+    \end{scope}
+    \node (4) [left=2.5mm of p] {${u_p}$};
+    \node (5) [left=2.5mm of q] {${u_q}$};
+\end{tikzpicture} 

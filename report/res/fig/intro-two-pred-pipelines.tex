@@ -1,0 +1,15 @@
+\begin{tikzpicture}[model/.style={rectangle, minimum width=15mm, minimum height=10mm, draw, thick},
+                demand/.style={text=blue}]
+    \node (context) {\shortstack{Features \\$\bm{\phi}$}};
+    \node[model] (model1) [below left=of context] {$f_{\theta_1}$};
+    \node[model] (model2) [below right=of context] {$f_{\theta_2}$};
+    \node[] (mse1) [below=of model1] {$\mathcal{L}_{\text{MSE}}(\hat{\bm{d}}_1, \bm{d}) = 1$};
+    \node[] (mse2) [below=of model2] {$\mathcal{L}_{\text{MSE}}(\hat{\bm{d}}_2, \bm{d}) = 1$};
+    
+    \draw[->] (context.south) +(-0.5, 0) -- (model1.north);
+    \draw[->] (context.south) +(0.5, 0) -- (model2.north);
+    
+    \draw[->] (model1) -- node[demand] (demand1) [right] {$\hat{d}_1 = 15$} (mse1);
+    \draw[->] (model2) -- node[demand] (demand2) [right] {$\hat{d}_2 = 17$} (mse2);
+    \draw[<->, draw=ForestGreen, very thick] (mse1) -- node[midway, fill=white] {\color{ForestGreen} $\mathbf{=}$} (mse2);
+\end{tikzpicture}

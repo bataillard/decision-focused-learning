@@ -1,0 +1,34 @@
+\begin{tikzpicture}
+    \coordinate (left-angle) at (0,4.5);
+    \coordinate (bad-pred-demand-c) at (3,4);
+    \coordinate (good-pred-demand-c) at (1, 4);
+    \coordinate (actual-demand-c) at (2.1,4);
+    \coordinate (opt-c) at (3,1);
+    \node (left-fzone) at (3.66, 6) {{}};
+
+        
+    \coordinate (cost) at (4.6, 4.4);
+    \coordinate (new-cost) at (4.6, 1.4);
+    
+    \filldraw[pattern color=black, pattern=dots, dashed] (left-angle) -- (bad-pred-demand-c) -- (opt-c) -- (1,0) -- (-1.5, 2) -- (left-angle);
+    \filldraw[fill=gray!20, thick] (left-angle) -- (actual-demand-c) -- (opt-c) -- (1,0) -- (-1.5, 2) -- (left-angle);
+    \draw[pattern color=black, pattern=dots, dashed] (left-angle) -- (good-pred-demand-c) -- (opt-c) -- (1,0) -- (-1.5, 2) -- (left-angle);
+
+    \draw[thick, ->] (bad-pred-demand-c) -- (cost);
+    \draw[thick, ->] (opt-c) -- (new-cost);
+    \node (cost-label) [right=1mm of cost] {$\bm{c}$};
+    \node (cost-label) [right=1mm of new-cost] {$\bm{c}$};
+    
+    \node[fill, circle, scale=0.4] at (actual-demand-c) (actual-demand) {};
+    \node[fill, circle, scale=0.4] at (good-pred-demand-c) (good-pred-demand) {};
+    \node[fill, circle, scale=0.4] at (bad-pred-demand-c) (bad-pred-demand) {};
+
+    \node at (1.8, 3.55) (actual-feasible) {$\bm{\mathcal{Z}}$};
+    \node at (0.5, 3) (good-pred-feasible) {$\bm{\mathcal{Z}_1}$};
+    \node at (2.7, 3.35) (bad-pred-feasible) {$\bm{\mathcal{Z}_2}$};  
+
+    \node[fill, circle, scale=0.8] at (opt-c) (opt) {};
+    \node[fill, circle, scale=0.8] at (bad-pred-demand-c) (subopt) {};
+    \node (subopt-label) [above=0mm of subopt] {$z^*(\bm{\hat{d}}_2)$};
+    \node (opt-label) [below right of=opt] {$z^*(\bm{d}) = z^*(\bm{\hat{d}}_1)$};
+\end{tikzpicture}

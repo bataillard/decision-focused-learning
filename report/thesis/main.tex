@@ -1,0 +1,37 @@
+\documentclass[a4paper,11pt,oneside]{report}
+
+\usepackage{silence} % Disable all warnings issued by latex starting with "You have..."
+\WarningFilter{latex}{You have requested package}
+\usepackage[MScThesis]{res/EPFLreport}
+
+\title{Decision-Focused Learning for Transportation Network Design}
+\author{Luca Bataillard}
+\supervisor{The Doctoral Student}
+\adviser{Prof. Emma Frejinger, Université de Montréal}
+\coadviser{Prof. Michel Bierlaire, EPFL}
+%\expert{}
+
+\begin{document}
+
+\maketitle
+\makeacks
+
+\include{thesis/chapters/00-abstract}
+
+\maketoc
+
+\include{thesis/chapters/01-introduction}
+\include{thesis/chapters/02-literature-review}
+\include{thesis/chapters/03-methodology}
+\include{thesis/chapters/04-evaluation}
+\include{thesis/chapters/05-conclusion}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliography}
+%\printbibliography
+\bibliography{thesis/thesis}
+
+\include{thesis/chapters/99-appendix}
+
+\end{document}
